@@ -76,7 +76,7 @@ Sau khi hoàn tất bước lọc ảnh, nhóm tiến hành gán nhãn mô tả 
 
 ```bash
 export MODEL_NAME="runwayml/stable-diffusion-v1-5"
-export DATASET_NAME="/mnt/c/Users/SE2025-14.2/data/ghibli"
+export DATASET_NAME="/mnt/c/Users/ssm_d/SE2025-14.2/data/ghibli"
 
 accelerate launch --num_processes=1 --mixed_precision="no" train_text_to_image_lora.py \
   --pretrained_model_name_or_path=$MODEL_NAME \
@@ -92,7 +92,7 @@ accelerate launch --num_processes=1 --mixed_precision="no" train_text_to_image_l
   --lr_warmup_steps=0 \
   --seed=42 \
   --output_dir="/mnt/c/Users/ssm_d/SE2025-14.2/model" \
-  --validation_prompt="cute dragon creature" \
+  --validation_prompt="A girl in a pink dress" \
   --report_to="wandb"
 ```
 
