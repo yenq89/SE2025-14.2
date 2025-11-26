@@ -116,7 +116,7 @@ Dataset bao gồm ảnh từ các bộ phim Ghibli sau:
 
 #### **Resize Details:**
 
-- **Source Size:** 997×997 pixels (square frame từ auto capture tool)
+- **Source Size:** Square frame (tỷ lệ 1:1 từ auto capture tool)
 - **Target Size:** 512×512 pixels (chuẩn SD 1.5)
 - **Method:** Resize trực tiếp 
 - **Resampling:** LANCZOS (chất lượng cao nhất, giữ chi tiết sắc nét)
@@ -126,7 +126,7 @@ Dataset bao gồm ảnh từ các bộ phim Ghibli sau:
 **Lý do chọn LANCZOS:**
 - Thuật toán resize chất lượng cao nhất trong Pillow
 - Giữ nguyên độ sắc nét của đường vẽ tay Ghibli
-- Ít bị artifacts khi scale down từ 997 → 512
+- Ít bị artifacts khi scale down (ví dụ: 997×997 → 512×512, 1257×1257 → 512×512)
 - Phù hợp cho anime/illustration style
 
 #### **Caption Generation:**
@@ -343,19 +343,23 @@ Dataset này phù hợp cho:
 ### **Source Code:**
 
 ```
-d:\SE_Data\
-├── pipeline_build_caption.py    # Pipeline chính
-├── requirements.txt             # Dependencies
-├── README_PIPELINE.md          # Hướng dẫn pipeline
-├── FAILOVER_STRATEGY.md        # Chi tiết Model Failover
-├── .env.example                # Template API keys
-└── test_gemini_api.py          # Test API keys
+SE2025-14.2/
+└── data_processing/
+    ├── scripts/
+    │   ├── pipeline_build_caption.py    # Pipeline chính
+    │   ├── requirements.txt             # Dependencies
+    │   ├── .env.example                 # Template API keys
+    │   └── test_gemini_api.py           # Test API keys
+    └── docs/
+        ├── README_PIPELINE.md           # Hướng dẫn pipeline
+        └── FAILOVER_STRATEGY.md         # Chi tiết Model Failover
 ```
 
 ### **Chạy Pipeline:**
 
 ```powershell
 # Setup
+cd data_processing/scripts
 pip install -r requirements.txt
 Copy-Item .env.example .env
 # (Chỉnh sửa .env với API keys của bạn)
@@ -495,11 +499,11 @@ Dataset này đã sẵn sàng để:
 
 ### **Tài liệu kỹ thuật:**
 
-- [README_PIPELINE.md](./README_PIPELINE.md) - Hướng dẫn chi tiết pipeline
-- [FAILOVER_STRATEGY.md](./FAILOVER_STRATEGY.md) - Chiến lược Model Failover
-- [requirements.txt](./requirements.txt) - Dependencies
-- [pipeline_build_caption.py](./pipeline_build_caption.py) - Source code
-- [test_gemini_api.py](./test_gemini_api.py) - API key testing
+- [README_PIPELINE.md](https://github.com/yenq89/SE2025-14.2/blob/feature/data-processing/data_processing/docs/README_PIPELINE.md) - Hướng dẫn chi tiết pipeline
+- [FAILOVER_STRATEGY.md](https://github.com/yenq89/SE2025-14.2/blob/feature/data-processing/data_processing/docs/FAILOVER_STRATEGY.md) - Chiến lược Model Failover
+- [requirements.txt](https://github.com/yenq89/SE2025-14.2/blob/feature/data-processing/data_processing/scripts/requirements.txt) - Dependencies
+- [pipeline_build_caption.py](https://github.com/yenq89/SE2025-14.2/blob/feature/data-processing/data_processing/scripts/pipeline_build_caption.py) - Source code
+- [test_gemini_api.py](https://github.com/yenq89/SE2025-14.2/blob/feature/data-processing/data_processing/scripts/test_gemini_api.py) - API key testing
 
 ### **Scripts phụ trợ:**
 

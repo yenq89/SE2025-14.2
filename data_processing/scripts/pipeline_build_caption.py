@@ -132,13 +132,13 @@ class PersonDetector:
 
 def resize_image(image_path: str, output_path: str, size: tuple = (512, 512)):
     """
-    Resize ảnh về kích thước mục tiêu (997x997 -> 512x512)
+    Resize ảnh về kích thước mục tiêu (square frame -> 512x512)
     
-    Lưu ý: Ảnh gốc đã là 997×997 (square frame từ auto capture tool),
+    Lưu ý: Ảnh gốc đã là square frame (tỷ lệ 1:1 từ auto capture tool),
     nên chỉ cần resize trực tiếp mà không cần center crop.
     
     Args:
-        image_path: Đường dẫn ảnh gốc (997×997)
+        image_path: Đường dẫn ảnh gốc (square frame)
         output_path: Đường dẫn lưu ảnh đã resize (512×512)
         size: Kích thước mục tiêu (width, height)
     """

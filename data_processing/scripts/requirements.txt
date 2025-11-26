@@ -1,0 +1,16 @@
+# Requirements cho Pipeline Chuẩn Bị Dữ Liệu Ghibli LoRA
+# Yêu cầu: Python 3.9+ (google-generativeai không hỗ trợ Python 3.8)
+
+# Core dependencies
+Pillow>=10.0.0
+tqdm>=4.65.0
+google-generativeai>=0.8.0
+python-dotenv>=1.0.0
+
+# Person detection (tùy chọn - có thể bỏ qua nếu không cần lọc ảnh)
+# Option 1: MediaPipe (nhẹ hơn, nhanh hơn - khuyến nghị)
+mediapipe>=0.10.0
+opencv-python>=4.8.0
+
+# Option 2: YOLOv8 (chính xác hơn nhưng nặng hơn)
+ultralytics>=8.0.0

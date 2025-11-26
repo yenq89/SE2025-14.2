@@ -17,17 +17,17 @@ Pipeline tự động xử lý dữ liệu ảnh từ các bộ phim Ghibli đ�
 
 ### Bước 2: Resize ảnh
 - **Kích thước**: 512x512 pixels
-- **Phương pháp**: LANCZOS resize (997×997 → 512×512)
-- **Input**: Ảnh đã lọc từ Bước 1 (997×997 pixels)
+- **Phương pháp**: LANCZOS resize (square frame → 512×512)
+- **Input**: Ảnh đã lọc từ Bước 1 (square frame, tỷ lệ 1:1)
 - **Output**: Ảnh resize lưu vào `data/ghibli/train/`
 
 **Tại sao sử dụng LANCZOS resampling?**
 
 **Bối cảnh ảnh gốc:**
 - Ảnh được capture từ phim với **Auto Screen Capture tool**
-- Frame size gốc: **997×997 pixels** (tỷ lệ 1:1 - square frame)
+- Frame size gốc: **Square frame** (tỷ lệ 1:1 - ví dụ: 997×997, 1257×1257)
 - Nguồn: Video 1080p (1920×1080) → tool tự động crop square từ giữa màn hình
-- **Vì đã là square (1:1), chỉ cần resize trực tiếp 997×997 → 512×512**
+- **Vì đã là square (1:1), chỉ cần resize trực tiếp về 512×512**
 
 ✅ **Ưu điểm của LANCZOS Resampling:**
 
@@ -54,13 +54,13 @@ img = cv2.resize(img, (512, 512), interpolation=cv2.INTER_CUBIC)
 # → Chất lượng khá nhưng vẫn có artifacts nhẹ
 
 # ✅ Pillow LANCZOS - chất lượng cao nhất (dataset hiện tại)
-img = Image.open(image_path)
+img = Image.open(image_path)  # Square frame 
 img = img.resize((512, 512), Image.Resampling.LANCZOS)
 # → Chi tiết sắc nét, không bị blur, phù hợp anime/illustration
 ```
 
 **Kết quả:**
-- Ảnh giữ nguyên tỷ lệ 1:1 (997×997 → 512×512)
+- Ảnh giữ nguyên tỷ lệ 1:1 (square frame → 512×512)
 - Chi tiết sắc nét, không bị blur hay artifacts
 - Đường nét vẽ tay được bảo toàn
 - Phù hợp cho training LoRA Stable Diffusion 1.5
