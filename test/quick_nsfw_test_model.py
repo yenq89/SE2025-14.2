@@ -17,11 +17,6 @@ attn_lora_path = r"C:\Users\ssm_d\SE2025-14.2\model\ghibli_checkpoint_data_v2\ch
 version = "v2"
 image_name = "modified_test_3.png"
 
-# naruto_checkpoint\checkpoint-85000\
-# attn_lora_path = r"C:\Users\ssm_d\SE2025-14.2\model\naruto_checkpoint\checkpoint-85000\pytorch_lora_weights.safetensors"
-# version = "v3_naruto"
-# image_name = "modified_test_2.png"
-
 # Đường dẫn tới model gốc (ví dụ: pretrained model trên hub)
 pipe = StableDiffusionPipeline.from_pretrained(
     "runwayml/stable-diffusion-v1-5",
