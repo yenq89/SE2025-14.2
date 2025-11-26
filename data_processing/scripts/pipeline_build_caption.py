@@ -132,11 +132,14 @@ class PersonDetector:
 
 def resize_image(image_path: str, output_path: str, size: tuple = (512, 512)):
     """
-    Resize ảnh về kích thước mục tiêu với center crop
+    Resize ảnh về kích thước mục tiêu (997x997 -> 512x512)
+    
+    Lưu ý: Ảnh gốc đã là 997×997 (square frame từ auto capture tool),
+    nên chỉ cần resize trực tiếp mà không cần center crop.
     
     Args:
-        image_path: Đường dẫn ảnh gốc
-        output_path: Đường dẫn lưu ảnh đã resize
+        image_path: Đường dẫn ảnh gốc (997×997)
+        output_path: Đường dẫn lưu ảnh đã resize (512×512)
         size: Kích thước mục tiêu (width, height)
     """
     try:
@@ -146,26 +149,7 @@ def resize_image(image_path: str, output_path: str, size: tuple = (512, 512)):
         if img.mode != 'RGB':
             img = img.convert('RGB')
         
-        # Tính toán để center crop
-        width, height = img.size
-        target_width, target_height = size
-        
-        # Tính tỉ lệ để crop
-        aspect_ratio = width / height
-        target_aspect = target_width / target_height
-        
-        if aspect_ratio > target_aspect:
-            # Ảnh rộng hơn -> crop chiều rộng
-            new_width = int(height * target_aspect)
-            left = (width - new_width) // 2
-            img = img.crop((left, 0, left + new_width, height))
-        else:
-            # Ảnh cao hơn -> crop chiều cao
-            new_height = int(width / target_aspect)
-            top = (height - new_height) // 2
-            img = img.crop((0, top, width, top + new_height))
-        
-        # Resize
+        # Resize trực tiếp với LANCZOS (chất lượng cao)
         img = img.resize(size, Image.Resampling.LANCZOS)
         
         # Lưu
