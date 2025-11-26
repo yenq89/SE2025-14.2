@@ -57,9 +57,9 @@ Dataset bao gồm ảnh từ các bộ phim Ghibli sau:
 
 ### **Giai Đoạn 2: Lọc Ảnh Thủ Công**
 
-#### **Lý do không dùng auto-filter:**
+> **📌 Lưu ý:** Pipeline `pipeline_build_caption.py` có tích hợp sẵn **Bước 1: Lọc ảnh tự động** sử dụng MediaPipe/YOLOv8 để phát hiện người. Đây là một hướng giải quyết thay thế nếu không muốn lọc thủ công. Tuy nhiên, dataset hiện tại (4,776 ảnh) sử dụng phương pháp **lọc thủ công 100%** vì lý do sau:
 
-Pipeline có tích hợp sẵn bước lọc ảnh tự động (MediaPipe/YOLOv8 để phát hiện người), nhưng:
+#### **Lý do không dùng auto-filter:**
 
 ❌ **Vấn đề:**
 - Lọc đi quá nhiều ảnh có giá trị (false negatives)
@@ -89,39 +89,45 @@ Pipeline có tích hợp sẵn bước lọc ảnh tự động (MediaPipe/YOLOv
 Ảnh đã lọc (4,789 ảnh)
     ↓
 ┌───────────────────────────────────────┐
-│  BƯỚC 1: Resize về 512×512           │
-│  - Method: Center crop + LANCZOS     │
-│  - Giữ nguyên tỉ lệ nhân vật         │
-│  - Output: 1.jpg, 2.jpg, ..., 4789.jpg │
-│  - Kết quả: 4,789/4,789 ảnh (100%)   │
+│  BƯỚC 1: Resize về 512×512            │
+│  - Giữ nguyên tỉ lệ nhân vật          │
+│  - Output: 1.jpg, 2.jpg, ..., 4789.jpg│
+│  - Kết quả: 4,789/4,789 ảnh (100%)    │
 └───────────────────────────────────────┘
     ↓
 ┌───────────────────────────────────────┐
-│  BƯỚC 2: Gen Caption với Gemini API  │
-│  - Model: gemini-2.5-flash (primary) │
-│  - Failover: 4 models × 5 API keys   │
-│  - Language: English, A2-B1 level    │
-│  - Length: 20-30 words               │
-│  - Kết quả: 4,776/4,789 ảnh (99.73%) │
-│  - Lỗi: 13 ảnh bị safety filter      │
+│  BƯỚC 2: Gen Caption với Gemini API   │
+│  - Model: gemini-2.5-flash (primary)  │
+│  - Failover: 4 models × 5 API keys    │
+│  - Language: English, A2-B1 level     │
+│  - Length: 20-30 words                │
+│  - Kết quả: 4,776/4,789 ảnh (99.73%)  │
+│  - Lỗi: 13 ảnh bị safety filter       │
 └───────────────────────────────────────┘
     ↓
 ┌───────────────────────────────────────┐
-│  OUTPUT: metadata.jsonl              │
-│  Format: {"file_name": "1.jpg",      │
-│           "text": "Ghibli style..."} │
-│  - 4,776 entries hợp lệ              │
+│  OUTPUT: metadata.jsonl               │
+│  Format: {"file_name": "1.jpg",       │
+│           "text": "Ghibli style..."}  │
+│  - 4,776 entries hợp lệ               │
 └───────────────────────────────────────┘
 ```
 
 
 #### **Resize Details:**
 
+- **Source Size:** 997×997 pixels (square frame từ auto capture tool)
 - **Target Size:** 512×512 pixels (chuẩn SD 1.5)
-- **Method:** Center crop để giữ nguyên nhân vật chính
-- **Resampling:** LANCZOS (chất lượng cao nhất)
-- **Format:** JPEG (quality=95)
+- **Method:** Resize trực tiếp 
+- **Resampling:** LANCZOS (chất lượng cao nhất, giữ chi tiết sắc nét)
+- **Format:** JPEG 
 - **Đặt tên:** Sequential numbering (1.jpg → 4789.jpg)
+
+**Lý do chọn LANCZOS:**
+- Thuật toán resize chất lượng cao nhất trong Pillow
+- Giữ nguyên độ sắc nét của đường vẽ tay Ghibli
+- Ít bị artifacts khi scale down từ 997 → 512
+- Phù hợp cho anime/illustration style
 
 #### **Caption Generation:**
 
@@ -301,10 +307,9 @@ Dataset tương đối cân bằng giữa các bộ phim (14-19%). Các ảnh b�
 # Khuyến nghị training config:
 - Base Model: Stable Diffusion 1.5
 - Resolution: 512×512
-- Batch Size: 4-8
-- Learning Rate: 1e-4 to 5e-5
-- Steps: 2,000-5,000 (tùy thuộc vào GPU)
-- Trigger Word: "Ghibli style"
+- Batch Size: 1
+- Learning Rate: 1e-4
+- Steps: 5,000
 ```
 
 ### **Validation:**

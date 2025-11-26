@@ -17,9 +17,53 @@ Pipeline tự động xử lý dữ liệu ảnh từ các bộ phim Ghibli đ�
 
 ### Bước 2: Resize ảnh
 - **Kích thước**: 512x512 pixels
-- **Phương pháp**: Center crop + LANCZOS resize (giữ nguyên nhân vật)
-- **Input**: Ảnh đã lọc từ Bước 1
+- **Phương pháp**: LANCZOS resize (997×997 → 512×512)
+- **Input**: Ảnh đã lọc từ Bước 1 (997×997 pixels)
 - **Output**: Ảnh resize lưu vào `data/ghibli/train/`
+
+**Tại sao sử dụng LANCZOS resampling?**
+
+**Bối cảnh ảnh gốc:**
+- Ảnh được capture từ phim với **Auto Screen Capture tool**
+- Frame size gốc: **997×997 pixels** (tỷ lệ 1:1 - square frame)
+- Nguồn: Video 1080p (1920×1080) → tool tự động crop square từ giữa màn hình
+- **Vì đã là square (1:1), chỉ cần resize trực tiếp 997×997 → 512×512**
+
+✅ **Ưu điểm của LANCZOS Resampling:**
+
+1. **Chất lượng cao nhất:**
+   - Thuật toán resize chất lượng cao nhất trong Pillow
+   - Giữ chi tiết sắc nét hơn OpenCV INTER_LINEAR/INTER_CUBIC
+   - Ít bị artifacts (răng cưa, blur) khi scale down từ 997→512
+   - Phù hợp cho ảnh anime/illustration (đường nét rõ ràng)
+
+2. **Phù hợp với Ghibli style:**
+   - Giữ nguyên độ sắc nét của đường vẽ tay
+   - Bảo toàn chi tiết biểu cảm khuôn mặt
+   - Không làm mờ texture (tóc, quần áo, background)
+   - Tối ưu cho training LoRA (model học đúng phong cách)
+
+**So sánh với các phương pháp khác:**
+```python
+# ❌ OpenCV INTER_LINEAR - nhanh nhưng kém chất lượng
+img = cv2.resize(img, (512, 512), interpolation=cv2.INTER_LINEAR)
+# → Ảnh bị mờ, mất chi tiết đường nét
+
+# ⚠️ OpenCV INTER_CUBIC - tốt hơn LINEAR nhưng vẫn kém LANCZOS
+img = cv2.resize(img, (512, 512), interpolation=cv2.INTER_CUBIC)
+# → Chất lượng khá nhưng vẫn có artifacts nhẹ
+
+# ✅ Pillow LANCZOS - chất lượng cao nhất (dataset hiện tại)
+img = Image.open(image_path)
+img = img.resize((512, 512), Image.Resampling.LANCZOS)
+# → Chi tiết sắc nét, không bị blur, phù hợp anime/illustration
+```
+
+**Kết quả:**
+- Ảnh giữ nguyên tỷ lệ 1:1 (997×997 → 512×512)
+- Chi tiết sắc nét, không bị blur hay artifacts
+- Đường nét vẽ tay được bảo toàn
+- Phù hợp cho training LoRA Stable Diffusion 1.5
 
 ### Bước 3: Tạo caption với Model Failover Strategy (chi tiết tại file `FAILOVER_STRATEGY.md`)
 - **API**: Google Gemini với 4 models/key
@@ -55,7 +99,7 @@ python --version
 ### 2. Cài đặt dependencies
 
 ```powershell
-pip install -r requirements.txt
+pip install -r data_processing/scripts/requirements.txt
 ```
 
 **Lưu ý:**
@@ -67,7 +111,7 @@ pip install -r requirements.txt
 **Bước 3.1:** Tạo file `.env` từ template:
 
 ```powershell
-Copy-Item .env.example .env
+Copy-Item data_processing/scripts/.env.example data_processing/scripts/.env
 ```
 
 **Bước 3.2:** Lấy API keys từ Google AI Studio:
@@ -92,6 +136,7 @@ GEMINI_API_KEY_3=your_api_key_here
 Trước khi chạy pipeline, test xem API keys có hoạt động không:
 
 ```powershell
+cd data_processing/scripts/
 python test_gemini_api.py
 ```
 
@@ -286,7 +331,7 @@ ERROR: No matching distribution found for google-generativeai>=0.8.0
 2. Cài đặt (check "Add to PATH")
 3. Chạy lại:
    ```powershell
-   pip install -r requirements.txt
+   pip install -r data_processing/scripts/requirements.txt
    ```
 
 
