@@ -57,9 +57,9 @@ Dataset bao gồm ảnh từ các bộ phim Ghibli sau:
 
 ### **Giai Đoạn 2: Lọc Ảnh Thủ Công**
 
-#### **Lý do không dùng auto-filter:**
+> **📌 Lưu ý:** Pipeline `pipeline_build_caption.py` có tích hợp sẵn **Bước 1: Lọc ảnh tự động** sử dụng MediaPipe/YOLOv8 để phát hiện người. Đây là một hướng giải quyết thay thế nếu không muốn lọc thủ công. Tuy nhiên, dataset hiện tại (4,776 ảnh) sử dụng phương pháp **lọc thủ công 100%** vì lý do sau:
 
-Pipeline có tích hợp sẵn bước lọc ảnh tự động (MediaPipe/YOLOv8 để phát hiện người), nhưng:
+#### **Lý do không dùng auto-filter:**
 
 ❌ **Vấn đề:**
 - Lọc đi quá nhiều ảnh có giá trị (false negatives)
@@ -89,39 +89,45 @@ Pipeline có tích hợp sẵn bước lọc ảnh tự động (MediaPipe/YOLOv
 Ảnh đã lọc (4,789 ảnh)
     ↓
 ┌───────────────────────────────────────┐
-│  BƯỚC 1: Resize về 512×512           │
-│  - Method: Center crop + LANCZOS     │
-│  - Giữ nguyên tỉ lệ nhân vật         │
-│  - Output: 1.jpg, 2.jpg, ..., 4789.jpg │
-│  - Kết quả: 4,789/4,789 ảnh (100%)   │
+│  BƯỚC 1: Resize về 512×512            │
+│  - Giữ nguyên tỉ lệ nhân vật          │
+│  - Output: 1.jpg, 2.jpg, ..., 4789.jpg│
+│  - Kết quả: 4,789/4,789 ảnh (100%)    │
 └───────────────────────────────────────┘
     ↓
 ┌───────────────────────────────────────┐
-│  BƯỚC 2: Gen Caption với Gemini API  │
-│  - Model: gemini-2.5-flash (primary) │
-│  - Failover: 4 models × 5 API keys   │
-│  - Language: English, A2-B1 level    │
-│  - Length: 20-30 words               │
-│  - Kết quả: 4,776/4,789 ảnh (99.73%) │
-│  - Lỗi: 13 ảnh bị safety filter      │
+│  BƯỚC 2: Gen Caption với Gemini API   │
+│  - Model: gemini-2.5-flash (primary)  │
+│  - Failover: 4 models × 5 API keys    │
+│  - Language: English, A2-B1 level     │
+│  - Length: 20-30 words                │
+│  - Kết quả: 4,776/4,789 ảnh (99.73%)  │
+│  - Lỗi: 13 ảnh bị safety filter       │
 └───────────────────────────────────────┘
     ↓
 ┌───────────────────────────────────────┐
-│  OUTPUT: metadata.jsonl              │
-│  Format: {"file_name": "1.jpg",      │
-│           "text": "Ghibli style..."} │
-│  - 4,776 entries hợp lệ              │
+│  OUTPUT: metadata.jsonl               │
+│  Format: {"file_name": "1.jpg",       │
+│           "text": "Ghibli style..."}  │
+│  - 4,776 entries hợp lệ               │
 └───────────────────────────────────────┘
 ```
 
 
 #### **Resize Details:**
 
+- **Source Size:** Square frame (tỷ lệ 1:1 từ auto capture tool)
 - **Target Size:** 512×512 pixels (chuẩn SD 1.5)
-- **Method:** Center crop để giữ nguyên nhân vật chính
-- **Resampling:** LANCZOS (chất lượng cao nhất)
-- **Format:** JPEG (quality=95)
+- **Method:** Resize trực tiếp 
+- **Resampling:** LANCZOS (chất lượng cao nhất, giữ chi tiết sắc nét)
+- **Format:** JPEG 
 - **Đặt tên:** Sequential numbering (1.jpg → 4789.jpg)
+
+**Lý do chọn LANCZOS:**
+- Thuật toán resize chất lượng cao nhất trong Pillow
+- Giữ nguyên độ sắc nét của đường vẽ tay Ghibli
+- Ít bị artifacts khi scale down (ví dụ: 997×997 → 512×512, 1257×1257 → 512×512)
+- Phù hợp cho anime/illustration style
 
 #### **Caption Generation:**
 
@@ -301,10 +307,9 @@ Dataset tương đối cân bằng giữa các bộ phim (14-19%). Các ảnh b�
 # Khuyến nghị training config:
 - Base Model: Stable Diffusion 1.5
 - Resolution: 512×512
-- Batch Size: 4-8
-- Learning Rate: 1e-4 to 5e-5
-- Steps: 2,000-5,000 (tùy thuộc vào GPU)
-- Trigger Word: "Ghibli style"
+- Batch Size: 1
+- Learning Rate: 1e-4
+- Steps: 5,000
 ```
 
 ### **Validation:**
@@ -338,19 +343,23 @@ Dataset này phù hợp cho:
 ### **Source Code:**
 
 ```
-d:\SE_Data\
-├── pipeline_build_caption.py    # Pipeline chính
-├── requirements.txt             # Dependencies
-├── README_PIPELINE.md          # Hướng dẫn pipeline
-├── FAILOVER_STRATEGY.md        # Chi tiết Model Failover
-├── .env.example                # Template API keys
-└── test_gemini_api.py          # Test API keys
+SE2025-14.2/
+└── data_processing/
+    ├── scripts/
+    │   ├── pipeline_build_caption.py    # Pipeline chính
+    │   ├── requirements.txt             # Dependencies
+    │   ├── .env.example                 # Template API keys
+    │   └── test_gemini_api.py           # Test API keys
+    └── docs/
+        ├── README_PIPELINE.md           # Hướng dẫn pipeline
+        └── FAILOVER_STRATEGY.md         # Chi tiết Model Failover
 ```
 
 ### **Chạy Pipeline:**
 
 ```powershell
 # Setup
+cd data_processing/scripts
 pip install -r requirements.txt
 Copy-Item .env.example .env
 # (Chỉnh sửa .env với API keys của bạn)
@@ -490,11 +499,11 @@ Dataset này đã sẵn sàng để:
 
 ### **Tài liệu kỹ thuật:**
 
-- [README_PIPELINE.md](./README_PIPELINE.md) - Hướng dẫn chi tiết pipeline
-- [FAILOVER_STRATEGY.md](./FAILOVER_STRATEGY.md) - Chiến lược Model Failover
-- [requirements.txt](./requirements.txt) - Dependencies
-- [pipeline_build_caption.py](./pipeline_build_caption.py) - Source code
-- [test_gemini_api.py](./test_gemini_api.py) - API key testing
+- [README_PIPELINE.md](https://github.com/yenq89/SE2025-14.2/blob/feature/data-processing/data_processing/docs/README_PIPELINE.md) - Hướng dẫn chi tiết pipeline
+- [FAILOVER_STRATEGY.md](https://github.com/yenq89/SE2025-14.2/blob/feature/data-processing/data_processing/docs/FAILOVER_STRATEGY.md) - Chiến lược Model Failover
+- [requirements.txt](https://github.com/yenq89/SE2025-14.2/blob/feature/data-processing/data_processing/scripts/requirements.txt) - Dependencies
+- [pipeline_build_caption.py](https://github.com/yenq89/SE2025-14.2/blob/feature/data-processing/data_processing/scripts/pipeline_build_caption.py) - Source code
+- [test_gemini_api.py](https://github.com/yenq89/SE2025-14.2/blob/feature/data-processing/data_processing/scripts/test_gemini_api.py) - API key testing
 
 ### **Scripts phụ trợ:**
 
