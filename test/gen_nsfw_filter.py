@@ -1,3 +1,6 @@
+# gen_nsfw_filter.py có chức năng kiểm tra kết quả đầu ra của toàn bộ dữ liệu
+# và lưu lại các caption gặp vấn đề NSFW vào file metadata.jsonl
+
 import os
 import json
 from pathlib import Path

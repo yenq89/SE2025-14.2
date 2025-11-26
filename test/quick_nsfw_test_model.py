@@ -1,3 +1,6 @@
+# File kiểm tra data trước khi có giải pháp fix bug
+# Kết quả kỳ vọng và thực tế của file **quick_nsfw_test_model.py** là tất cả trường hợp đều trả ra ảnh bình thường.
+
 from diffusers import StableDiffusionPipeline
 import torch
 import os

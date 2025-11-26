@@ -1,3 +1,7 @@
+# cluster_nsfw_caption.py đọc kết quả từ metadata.jsonl,
+# thực hiện tokenize, phân cụm vector đầu ra của tokenizer để phân tích sâu hơn về
+# các lý do tạo NSFW. Tuy nhiên, quá trình này đang bị dừng.
+
 # cluster_nsfw_captions.py
 import os, json
 from pathlib import Path

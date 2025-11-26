@@ -1,3 +1,7 @@
+# File kiểm tra data trước khi có giải pháp fix bug
+# Kết quả kỳ vọng của file **quick_modified_test_model.py** là nhập đầu vào, 
+# chạy qua 1 trong 2 mô hình được huấn luyện LoRA từ dữ liệu, nhận kết quả đầu ra là ảnh bình thường hoặc ảnh đen nếu dính NSFW.
+
 from diffusers import StableDiffusionPipeline
 import torch
 import os
