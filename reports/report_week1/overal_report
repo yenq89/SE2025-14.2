@@ -1,0 +1,11 @@
+Báo cáo tiến độ tuần 1:
+
+Nhóm xác định sử dụng mã nguồn mở của Stable Diffusion trên Hugging Face. 
+Với một số phiên bản được xác định là: Stable Diffusion XL base v1.0, SD v1.5, SD v3.5 large, nhóm thực hiện chia đều 3 phiên bản cho 3 thành viên trong nhóm để chạy thử mô hình.
+Quá trình này diễn ra không suôn sẻ, khi quá trình cài đặt của nhóm đã gặp vấn đề chung. 
+Đó là vấn đề không thể đáp ứng của máy tính cá nhân và Google Colab free (sử dụng GPU).
+
+Đối với dữ liệu, từng thành viên nhóm thực hiện chọn chủ đề mong muốn cho bức tranh/ảnh cần tạo ra.
+Chủ đề của ba người bao gồm: hình ảnh người nông dân, thú cưng theo phong cách anime, và tranh sơn mài hoa sen Việt Nam.
+
+Cả phiên bản và dữ liệu đang được nhóm tìm hiểu để chọn ra hướng đi có tiềm năng nhất.
