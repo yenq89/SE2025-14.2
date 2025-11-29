@@ -933,6 +933,7 @@ def main():
                     unet=unwrap_model(unet),
                     revision=args.revision,
                     variant=args.variant,
+                    safety_checker=None,
                     torch_dtype=weight_dtype,
                 )
                 images = log_validation(pipeline, args, accelerator, epoch)
@@ -960,6 +961,7 @@ def main():
                 args.pretrained_model_name_or_path,
                 revision=args.revision,
                 variant=args.variant,
+                safety_checker=None,
                 torch_dtype=weight_dtype,
             )
 
