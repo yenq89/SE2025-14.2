@@ -66,6 +66,7 @@ Dù vậy, mô hình vẫn cho ra một số ảnh đẹp trong khoảng này, c
 </p>
 
 - Tại checkpoint thứ 5000: Ghi nhận lại ảnh được tạo ra như sau:
+  
 ![modified_test_10.png](modified_test_10.png)
 
 -> Có thể thấy rằng dù chưa hoàn hảo, checkpoint tại bước 5000 đã đạt mức cân bằng khá tốt giữa việc giữ chi tiết khuôn mặt, phong cách Ghibli và cấu trúc nhân vật. Khi số lượng dữ liệu tăng và mô hình học sâu hơn, chất lượng ảnh cải thiện ở phần chi tiết trang phục và tóc, tuy nhiên cần kiểm soát overfitting để giữ độ sắc nét của khuôn mặt.
