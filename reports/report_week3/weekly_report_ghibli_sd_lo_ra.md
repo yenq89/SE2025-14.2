@@ -210,17 +210,17 @@ Ví dụ: Với 3 câu lệnh lần lượt là
 
 Thì 3 ảnh được mô hình gốc stable-diffusion-v1-5 tạo ra là:
 <p float="left">
-  <img src="D:\SE\SE2025-14.2\reports\report_week3\image_gen_from_sd15\1.png" width="200" />
-  <img src="D:\SE\SE2025-14.2\reports\report_week3\image_gen_from_sd15\2.png" width="200" />
-  <img src="D:\SE\SE2025-14.2\reports\report_week3\image_gen_from_sd15\3.png" width="200" />
+  <img src="image_gen_from_sd15\1.png" width="200" />
+  <img src="image_gen_from_sd15\2.png" width="200" />
+  <img src="image_gen_from_sd15\3.png" width="200" />
 </p>
 
 Mô hình mới được huấn luyện với bộ data Ghibli tạo được ba ảnh: 
 
 <p float="left">
-  <img src="D:\SE\SE2025-14.2\reports\report_week3\image_gen_from_lora_ghibli\1.png" width="200" />
-  <img src="D:\SE\SE2025-14.2\reports\report_week3\image_gen_from_lora_ghibli\2.png" width="200" />
-  <img src="D:\SE\SE2025-14.2\reports\report_week3\image_gen_from_lora_ghibli\3.png" width="200" />
+  <img src="image_gen_from_lora_ghibli\1.png" width="200" />
+  <img src="image_gen_from_lora_ghibli\2.png" width="200" />
+  <img src="image_gen_from_lora_ghibli\3.png" width="200" />
 </p>
 
 **Nhận xét chung:** Mô hình chưa sinh ảnh được như đúng mong đợi

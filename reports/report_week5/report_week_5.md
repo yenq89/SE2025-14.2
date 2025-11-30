@@ -17,9 +17,9 @@ Mô hình đã bắt đầu tạo ra các nhân vật mang phong cách Ghibli. T
 Một vài ví dụ:
 
 <p float="left">
-  <img src="D:\SE\SE2025-14.2\test\images\v2\modified_test_4.png" width="200" />
-  <img src="D:\SE\SE2025-14.2\test\images\v2\modified_test_5.png" width="200" />
-  <img src="D:\SE\SE2025-14.2\test\images\v2\modified_test_6.png" width="200" />
+  <img src="images\modified_test_4.png" width="200" />
+  <img src="images\modified_test_5.png" width="200" />
+  <img src="images\modified_test_6.png" width="200" />
 </p>
 
 **Nguyên nhân có thể do:**
