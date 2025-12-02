@@ -1,4 +1,4 @@
-# Báo cáo công việc tuần 5 — Dự án LoRA Ghibli SD
+# Báo cáo công việc tuần 6 — Dự án LoRA Ghibli SD
 
 ## 1. Công việc đã thực hiện
 
