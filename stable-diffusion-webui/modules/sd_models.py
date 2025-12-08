@@ -52,6 +52,11 @@ def replace_key(d, key, new_key, value):
     d.update(new_d)
     return d
 
+## Ý nghĩa / liên quan debug
+# Giải mã checkpoint và metadata.
+# Gán hash → WebUI dùng hash để biết checkpoint đã load hay chưa.
+# Nếu hash thay đổi → WebUI sẽ reload lại model.
+# Nhiều lỗi “model không load đúng” là do metadata sai hoặc hash mismatch.
 
 class CheckpointInfo:
     def __init__(self, filename):
@@ -59,6 +64,7 @@ class CheckpointInfo:
         abspath = os.path.abspath(filename)
         abs_ckpt_dir = os.path.abspath(shared.cmd_opts.ckpt_dir) if shared.cmd_opts.ckpt_dir is not None else None
 
+        # Kiểm tra đây có phải file .safetensors không
         self.is_safetensors = os.path.splitext(filename)[1].lower() == ".safetensors"
 
         if abs_ckpt_dir and abspath.startswith(abs_ckpt_dir):
@@ -71,6 +77,8 @@ class CheckpointInfo:
         if name.startswith("\\") or name.startswith("/"):
             name = name[1:]
 
+        # ---- Đọc metadata từ safetensors ----
+        # Với file .ckpt WebUI không có metadata
         def read_metadata():
             metadata = read_metadata_from_safetensors(filename)
             self.modelspec_thumbnail = metadata.pop('modelspec.thumbnail', None)
@@ -87,11 +95,15 @@ class CheckpointInfo:
         self.name = name
         self.name_for_extra = os.path.splitext(os.path.basename(filename))[0]
         self.model_name = os.path.splitext(name.replace("/", "_").replace("\\", "_"))[0]
-        self.hash = model_hash(filename)
 
+
+        # ---- Hash và tiêu đề hiển thị ----
+        self.hash = model_hash(filename)
         self.sha256 = hashes.sha256_from_cache(self.filename, f"checkpoint/{name}")
         self.shorthash = self.sha256[0:10] if self.sha256 else None
 
+        # Tạo tên hiển thị dạng:
+        #   "model.safetensors [12345abcde]"
         self.title = name if self.shorthash is None else f'{name} [{self.shorthash}]'
         self.short_title = self.name_for_extra if self.shorthash is None else f'{self.name_for_extra} [{self.shorthash}]'
 
@@ -149,6 +161,10 @@ def setup_model():
 def checkpoint_tiles(use_short=False):
     return [x.short_title if use_short else x.title for x in checkpoints_list.values()]
 
+## Ý nghĩa
+# WebUI chỉ xem models/Stable-diffusion/ là “model chính”.
+# File LoRA để trong folder này → WebUI cư xử như “full model”, gây lỗi (như bạn gặp).
+# Nếu đưa LoRA sai thư mục → WebUI coi đó là “base checkpoint” → load state_dict sai → ảnh xám.
 
 def list_models():
     checkpoints_list.clear()
@@ -162,7 +178,15 @@ def list_models():
         model_url = f"{shared.hf_endpoint}/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors"
         expected_sha256 = '6ce0161689b3853acaa03779ec93eafe75a02f4ced659bee03f50797806fa2fa'
 
-    model_list = modelloader.load_models(model_path=model_path, model_url=model_url, command_path=shared.cmd_opts.ckpt_dir, ext_filter=[".ckpt", ".safetensors"], download_name="v1-5-pruned-emaonly.safetensors", ext_blacklist=[".vae.ckpt", ".vae.safetensors"], hash_prefix=expected_sha256)
+    # load file .ckpt và .safetensors từ thư mục models/Stable-diffusion
+    model_list = modelloader.load_models(
+        model_path=model_path,
+        model_url=model_url, 
+        command_path=shared.cmd_opts.ckpt_dir, 
+        ext_filter=[".ckpt", ".safetensors"], 
+        download_name="v1-5-pruned-emaonly.safetensors", 
+        ext_blacklist=[".vae.ckpt", ".vae.safetensors"], 
+        hash_prefix=expected_sha256)
 
     if os.path.exists(cmd_ckpt):
         checkpoint_info = CheckpointInfo(cmd_ckpt)
@@ -172,6 +196,7 @@ def list_models():
     elif cmd_ckpt is not None and cmd_ckpt != shared.default_sd_model_file:
         print(f"Checkpoint in --ckpt argument not found (Possible it was moved to {model_path}: {cmd_ckpt}", file=sys.stderr)
 
+    # Đăng ký từng checkpoint vào danh sách
     for filename in model_list:
         checkpoint_info = CheckpointInfo(filename)
         checkpoint_info.register()
@@ -214,6 +239,12 @@ def model_hash(filename):
     except FileNotFoundError:
         return 'NOFILE'
 
+## Ý nghĩa
+# Nếu bạn từng chọn SD 1.5 → WebUI lưu trong config.
+# Khi load LoRA (trong Stable-diffusion folder), do không valid → WebUI fallback về model trước đó → SD 1.5.
+# Điều này giải thích đúng hiện tượng của bạn:
+# Load LoRA → ảnh xám → load SD1.5 → load lại LoRA → ảnh có ý nghĩa
+# Vì LoRA không load được, WebUI silently fallback sang SD 1.5.
 
 def select_checkpoint():
     """Raises `FileNotFoundError` if no checkpoints are found."""
@@ -233,6 +264,7 @@ def select_checkpoint():
         error_message += "Can't run without a checkpoint. Find and place a .ckpt or .safetensors file into any of those locations."
         raise FileNotFoundError(error_message)
 
+    # Không tìm thấy → lấy cái đầu tiên
     checkpoint_info = next(iter(checkpoints_list.values()))
     if model_checkpoint is not None:
         print(f"Checkpoint {model_checkpoint} not found; loading fallback {checkpoint_info.title}", file=sys.stderr)
@@ -308,6 +340,13 @@ def read_metadata_from_safetensors(filename):
 
         return res
 
+## Ý nghĩa
+# Diffusers dùng API load LoRA khác hoàn toàn với WebUI.
+# WebUI yêu cầu đúng key structure, ví dụ:
+# lora_unet_down_blocks_0_attentions_0...
+# Nhưng LoRA diffusers thường có key:
+# unet.down_blocks.0.attentions.0....
+# → WebUI load → mismatch → bộ UNet bị thiếu weight → output toàn xám.
 
 def read_state_dict(checkpoint_file, print_global_state=False, map_location=None):
     _, extension = os.path.splitext(checkpoint_file)
@@ -406,6 +445,10 @@ def set_model_fields(model):
     if not hasattr(model, 'latent_channels'):
         model.latent_channels = 4
 
+## Ý nghĩa & debug
+# Nếu strict=False, WebUI không báo lỗi key mismatch.
+# Khi import LoRA vào Stable-diffusion folder, bạn đang cố load LoRA như “full model”.
+# WebUI không báo lỗi → nhưng UNet thiếu hàng trăm weights → ảnh xám.
 
 def load_model_weights(model, checkpoint_info: CheckpointInfo, state_dict, timer):
     sd_model_hash = checkpoint_info.calculate_shorthash()
@@ -413,6 +456,7 @@ def load_model_weights(model, checkpoint_info: CheckpointInfo, state_dict, timer
 
     if devices.fp8:
         # prevent model to load state dict in fp8
+        # Setup precision (torch.float16)
         model.half()
 
     if not SkipWritingToConfig.skip:
@@ -421,6 +465,7 @@ def load_model_weights(model, checkpoint_info: CheckpointInfo, state_dict, timer
     if state_dict is None:
         state_dict = get_checkpoint_state_dict(checkpoint_info, timer)
 
+    # Gán model_type (SD1.5, SD2, SDXL...)
     set_model_type(model, state_dict)
     set_model_fields(model)
 
@@ -437,6 +482,7 @@ def load_model_weights(model, checkpoint_info: CheckpointInfo, state_dict, timer
     if hasattr(model, "before_load_weights"):
         model.before_load_weights(state_dict)
 
+    # Load state_dict vào UNet, VAE, CLIP
     model.load_state_dict(state_dict, strict=False)
     timer.record("apply weights to model")
 
@@ -481,7 +527,10 @@ def load_model_weights(model, checkpoint_info: CheckpointInfo, state_dict, timer
 
         alphas_cumprod = model.alphas_cumprod
         model.alphas_cumprod = None
+
+        # Setup precision (torch.float16)
         model.half()
+
         model.alphas_cumprod = alphas_cumprod
         model.alphas_cumprod_original = alphas_cumprod
         model.first_stage_model = vae
@@ -535,6 +584,8 @@ def load_model_weights(model, checkpoint_info: CheckpointInfo, state_dict, timer
     sd_vae.delete_base_vae()
     sd_vae.clear_loaded_vae()
     vae_file, vae_source = sd_vae.resolve_vae(checkpoint_info.filename).tuple()
+
+    # Load VAE phù hợp
     sd_vae.load_vae(model, vae_file, vae_source)
     timer.record("load VAE")
 
@@ -782,7 +833,9 @@ def get_obj_from_str(string, reload=False):
         importlib.reload(module_imp)
     return getattr(importlib.import_module(module, package=None), cls)
 
-
+## Lý do ảnh xám ở đây
+# Nếu checkpoint không có UNet đầy đủ → load_model_weights() không load được weight cho UNet.
+# UNet không có weight → decode từ latent thành noise → ảnh xám.
 def load_model(checkpoint_info=None, already_loaded_state_dict=None):
     from modules import sd_hijack
     checkpoint_info = checkpoint_info or select_checkpoint()
@@ -799,8 +852,10 @@ def load_model(checkpoint_info=None, already_loaded_state_dict=None):
     if already_loaded_state_dict is not None:
         state_dict = already_loaded_state_dict
     else:
+        # đọc state_dict
         state_dict = get_checkpoint_state_dict(checkpoint_info, timer)
 
+    # tìm file config (v1-inference.yaml)
     checkpoint_config = sd_models_config.find_checkpoint_config(state_dict, checkpoint_info)
     clip_is_included_into_sd = any(x for x in [sd1_clip_weight, sd2_clip_weight, sdxl_clip_weight, sdxl_refiner_clip_weight] if x in state_dict)
 
@@ -826,6 +881,7 @@ def load_model(checkpoint_info=None, already_loaded_state_dict=None):
         print('Failed to create model quickly; will retry using slow method.', file=sys.stderr)
 
         with sd_disable_initialization.InitializeOnMeta():
+            # tạo model từ config
             sd_model = instantiate_from_config(sd_config.model, state_dict)
 
     sd_model.used_config = checkpoint_config
@@ -842,6 +898,7 @@ def load_model(checkpoint_info=None, already_loaded_state_dict=None):
         }
 
     with sd_disable_initialization.LoadStateDictOnMeta(state_dict, device=model_target_device(sd_model), weight_dtype_conversion=weight_dtype_conversion):
+        # load weight (UNet, VAE, CLIP)
         load_model_weights(sd_model, checkpoint_info, state_dict, timer)
 
     timer.record("load weights from state dict")
@@ -874,7 +931,13 @@ def load_model(checkpoint_info=None, already_loaded_state_dict=None):
 
     return sd_model
 
+## Ý nghĩa
+# Khi bạn load SD1.5 → model_valid = True
+# Sau đó load LoRA sai → model_invalid → WebUI fallback lại model SD1.5.
 
+## Đây chính xác là hiện tượng:
+# Khi chọn LoRA lần 1 → ảnh xám nhưng load không thành công
+# Khi chọn lại LoRA lần 2 → hình ra bình thường (vì WebUI giữ lại model SD1.5 từ cache)
 def reuse_model_from_already_loaded(sd_model, checkpoint_info, timer):
     """
     Checks if the desired checkpoint from checkpoint_info is not already loaded in model_data.loaded_sd_models.
@@ -1007,7 +1070,9 @@ def unload_model_weights(sd_model=None, info=None):
 
     return sd_model
 
-
+## Ý nghĩa
+# Tăng tốc → không ảnh hưởng LoRA
+# Không gây ảnh xám
 def apply_token_merging(sd_model, token_merging_ratio):
     """
     Applies speed and memory optimizations from tomesd.
