@@ -1,4 +1,4 @@
-# api/routes.py
+# ap
 from fastapi import APIRouter, HTTPException
 from schemas.model import LoadModelReq
 from schemas.inference import GenerateReq

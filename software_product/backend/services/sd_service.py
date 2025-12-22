@@ -10,7 +10,7 @@ from services.quick_nsfw_module import run_inference
 import torch
 from diffusers import StableDiffusionPipeline
 
-from core.config import BASE_MODEL_ID, ROOT_IMAGE_DIR, LORA_DIR, REINIT_PIPE_ON_LOAD
+from core.config import BASE_MODEL_ID, BASE_MODELS, ROOT_IMAGE_DIR, LORA_DIR, REINIT_PIPE_ON_LOAD
 
 logger = logging.getLogger("sd-webui")
 
@@ -29,14 +29,17 @@ class SDService:
         return self._status
 
     def list_models(self) -> List[str]:
-        if not os.path.isdir(LORA_DIR):
-            return []
-        names = []
-        for fn in os.listdir(LORA_DIR):
-            if fn.lower().endswith(".safetensors"):
-                names.append(os.path.splitext(fn)[0])  
-        names.sort()
-        return names
+        names: List[str] = []
+
+        names.extend(BASE_MODELS)
+
+        if os.path.isdir(LORA_DIR):
+            for fn in os.listdir(LORA_DIR):
+                if fn.lower().endswith(".safetensors"):
+                    names.append(os.path.splitext(fn)[0])
+
+        return sorted(set(names))
+
 
     def _resolve_lora_path(self, model_name: str) -> str:
         for name in self.list_models():
@@ -70,6 +73,18 @@ class SDService:
             self._status.update({"status": "loading", "message": "", "activeModel": None})
 
             try:
+                if model_name in BASE_MODELS:
+                    self._pipe = None
+                    self._ensure_pipeline_loaded()
+
+                    self._status.update({
+                        "status": "loaded",
+                        "message": f"Loaded base model: {model_name}",
+                        "activeModel": model_name
+                    })
+                    logger.info("Loaded base model OK: %s", model_name)
+                    return self._status
+
                 lora_path = self._resolve_lora_path(model_name)
                 logger.info("Requested model=%s, resolved lora_path=%s", model_name, lora_path)
 
@@ -84,7 +99,7 @@ class SDService:
 
                 self._status.update({
                     "status": "loaded",
-                    "message": f"Loaded {model_name} in {dt} ms",
+                    "message": f"Loaded LoRA {model_name} in {dt} ms",
                     "activeModel": model_name
                 })
                 logger.info("Loaded LoRA OK model=%s in %d ms", model_name, dt)
@@ -94,6 +109,7 @@ class SDService:
                 logger.exception("Load model failed")
                 self._status.update({"status": "failed", "message": str(e), "activeModel": None})
                 raise
+
 
     def generate(
         self,
@@ -117,10 +133,16 @@ class SDService:
 
             # auto-switch LoRA nếu FE gửi khác activeModel
             if self._status.get("activeModel") != model_name:
-                lora_path = self._resolve_lora_path(model_name)
-                logger.info("Auto-switch LoRA to %s (%s)", model_name, lora_path)
-                self._pipe.unet.load_attn_procs(lora_path)
-                self._status["activeModel"] = model_name
+                if model_name in BASE_MODELS:
+                    logger.info("Switch to base model %s (re-init pipeline)", model_name)
+                    self._pipe = None
+                    self._ensure_pipeline_loaded()
+                    self._status["activeModel"] = model_name
+                else:
+                    lora_path = self._resolve_lora_path(model_name)
+                    logger.info("Auto-switch LoRA to %s (%s)", model_name, lora_path)
+                    self._pipe.unet.load_attn_procs(lora_path)
+                    self._status["activeModel"] = model_name
 
             image, inference_ms = run_inference(
                 pipe=self._pipe,

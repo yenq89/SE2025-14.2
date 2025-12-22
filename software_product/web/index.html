@@ -1,402 +1,189 @@
 <!doctype html>
 <html lang="vi">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SD Demo WebUI</title>
-  <style>
-    :root {
-      --bg: #0b1020;
-      --card: #121a33;
-      --muted: #9fb0d0;
-      --text: #e9eeff;
-      --ok: #44d19d;
-      --warn: #ffcc66;
-      --bad: #ff5a6a;
-      --run: #7bd3ff;
-      --bd: rgba(255,255,255,.12);
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: radial-gradient(1200px 600px at 20% 0%, #16214a 0%, var(--bg) 60%);
-      color: var(--text);
-      padding: 18px;
-    }
-    .wrap { max-width: 1100px; margin: 0 auto; }
-    .top {
-      display:flex; justify-content:space-between; align-items:flex-start; gap: 12px;
-      margin-bottom: 14px;
-    }
-    h1 { margin:0; font-size: 20px; }
-    .sub { margin-top: 4px; font-size: 13px; color: var(--muted); line-height: 1.35; }
-    .pill {
-      display:inline-flex; align-items:center; gap:8px;
-      border: 1px solid var(--bd);
-      background: rgba(0,0,0,.18);
-      padding: 7px 10px; border-radius: 999px;
-      color: var(--muted); font-size: 13px;
-      user-select: none;
-    }
-    .dot { width: 10px; height: 10px; border-radius: 999px; background: var(--warn); }
-    .dot.ok { background: var(--ok); }
-    .dot.bad { background: var(--bad); }
-    .dot.run { background: var(--run); }
-
-    .grid { display:grid; grid-template-columns: 1.1fr .9fr; gap: 14px; }
-    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-
-    .card {
-      background: rgba(18,26,51,.88);
-      border: 1px solid var(--bd);
-      border-radius: 14px;
-      padding: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    }
-    label { display:block; font-size: 13px; color: var(--muted); margin: 10px 0 6px; }
-    input, select, textarea, button {
-      border-radius: 12px;
-      border: 1px solid var(--bd);
-      background: rgba(0,0,0,.18);
-      color: var(--text);
-      padding: 10px 12px;
-      outline: none;
-    }
-    textarea { width: 100%; min-height: 120px; resize: vertical; }
-    input:focus, select:focus, textarea:focus { border-color: rgba(150,180,255,.5); box-shadow: 0 0 0 3px rgba(80,120,255,.15); }
-    button { cursor: pointer; font-weight: 700; }
-    button:hover { background: rgba(255,255,255,.10); }
-    button:disabled { opacity: .5; cursor:not-allowed; }
-    .primary { background: rgba(80,120,255,.22); border-color: rgba(80,120,255,.35); }
-    .row { display:flex; gap:10px; align-items:center; flex-wrap: wrap; }
-    .row > * { flex: 1 1 auto; }
-    .row.tight > * { flex: 0 0 auto; }
-    .error {
-      margin-top: 10px;
-      color: var(--bad);
-      white-space: pre-wrap;
-      display:none;
-    }
-    .hint { color: var(--muted); font-size: 12px; line-height: 1.35; }
-    .imgBox {
-      width:100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 14px;
-      border: 1px dashed rgba(255,255,255,.16);
-      background: rgba(0,0,0,.18);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-    }
-    .imgBox img { width:100%; height:100%; object-fit: contain; display:none; background: rgba(0,0,0,.08); }
-    .toolbar { display:flex; align-items:center; justify-content:space-between; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-    a.linkBtn {
-      display:inline-flex; align-items:center; justify-content:center;
-      border: 1px solid var(--bd);
-      background: rgba(0,0,0,.18);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      text-decoration:none;
-      font-weight: 700;
-    }
-    a.linkBtn:hover { background: rgba(255,255,255,.10); }
-    details { margin-top: 10px; }
-    summary { cursor:pointer; color: var(--muted); }
-    pre { background: rgba(0,0,0,.22); border: 1px solid rgba(255,255,255,.10); padding: 10px; border-radius: 12px; overflow:auto; color: #d6deff; }
-  </style>
+  <title>Stable Diffusion Demo WebUI</title>
+  <link rel="stylesheet" href="/assets/styles.css">
 </head>
+
 <body>
-<div class="wrap">
-  <div class="top">
-    <div>
-      <h1>Stable Diffusion Demo WebUI</h1>
-      <div class="sub">
-        Load model (LoRA) → Generate bằng prompt → hiển thị ảnh + download. <br/>
-        API: <code>/api/models</code>, <code>/api/model/load</code>, <code>/api/generate</code>
+  <div class="wrap">
+
+    <div class="topbar">
+      <div class="title">
+        <h1>Stable Diffusion Demo WebUI</h1>
+        <p class="desc">
+          Chọn model LoRA → Load → nhập prompt → Generate. Ảnh output hiển thị trực tiếp và có nút xem full / tải về.
+        </p>
+      </div>
+
+      <div class="right">
+        <div class="badge" title="Trạng thái model">
+          <div class="dot" id="dot"></div>
+          <div class="txt">
+            <b id="statusTop">UNKNOWN</b>
+            <span id="statusText">—</span>
+          </div>
+        </div>
+        <div class="chip" id="chipApi" title="Click để copy API base">
+          API <code id="apiBaseLabel">(auto)</code>
+        </div>
       </div>
     </div>
-    <div class="pill" title="Trạng thái backend/model">
-      <div class="dot" id="dot"></div>
-      <div id="statusText">UNKNOWN</div>
+
+    <div class="grid">
+      <!-- LEFT: Controls -->
+      <div class="card">
+        <div class="cardHeader">
+          <div class="h">
+            <b>Controls</b>
+            <span>Model, prompt và tham số inference (slider kéo thả)</span>
+          </div>
+          <div class="row tight" style="gap:10px;">
+            <button class="btn btnGhost btnSmall" id="btnStatus">Refresh status</button>
+          </div>
+        </div>
+
+        <div class="cardBody">
+          <label>Model (LoRA)</label>
+          <div class="row">
+            <select id="modelSelect"></select>
+            <button class="btn btnPrimary btnSmall" id="btnLoad">Load / Reload</button>
+          </div>
+          <div class="hint" id="modelHint" style="margin-top:8px;">
+            Tip: Đổi model có thể Load hoặc cứ Generate (BE auto-switch).
+          </div>
+
+          <label>Prompt <span class="req">*</span></label>
+          <textarea id="prompt" placeholder="Ví dụ: Ghibli style, hand drawn, cozy scene..."></textarea>
+
+          <div class="row" style="margin-top:6px;">
+            <div>
+              <label>Width</label>
+              <div class="sliderWrap">
+                <div class="sliderTop">
+                  <span class="val">Value: <b id="wVal">512</b></span>
+                  <span class="hint">256–768 (chia hết cho 8)</span>
+                </div>
+                <input id="width" type="range" min="256" max="768" step="8" value="512">
+              </div>
+            </div>
+            <div>
+              <label>Height</label>
+              <div class="sliderWrap">
+                <div class="sliderTop">
+                  <span class="val">Value: <b id="hVal">512</b></span>
+                  <span class="hint">256–768 (chia hết cho 8)</span>
+                </div>
+                <input id="height" type="range" min="256" max="768" step="8" value="512">
+              </div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:6px;">
+            <div>
+              <label>Steps</label>
+              <div class="sliderWrap">
+                <div class="sliderTop">
+                  <span class="val">Value: <b id="sVal">30</b></span>
+                  <span class="hint">10–50</span>
+                </div>
+                <input id="steps" type="range" min="10" max="50" step="1" value="30">
+              </div>
+            </div>
+            <div>
+              <label>CFG Scale</label>
+              <div class="sliderWrap">
+                <div class="sliderTop">
+                  <span class="val">Value: <b id="cVal">7.5</b></span>
+                  <span class="hint">1.0–12.0</span>
+                </div>
+                <input id="cfgScale" type="range" min="1" max="12" step="0.1" value="7.5">
+              </div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:6px;">
+            <div>
+              <label>Seed (optional)</label>
+              <input id="seed" type="number" placeholder="vd 42 (để trống → random)">
+              <div class="hint" style="margin-top:8px;">Seed giúp tái lập kết quả.</div>
+            </div>
+            <div>
+              <label>Negative prompt (optional)</label>
+              <input id="neg" placeholder="vd: nsfw, nude, bad anatomy">
+              <div class="hint" style="margin-top:8px;">Prompt phụ để “tránh” một số đặc điểm.</div>
+            </div>
+          </div>
+
+          <div class="row tight" style="margin-top: 14px; align-items:center;">
+            <button class="btn btnPrimary btnSmall" id="btnGen" disabled>Generate</button>
+            <span class="hint" id="hintLine">Model chưa load → không cho generate.</span>
+            <span class="kbd">Ctrl/⌘ + Enter</span>
+          </div>
+
+          <div class="error" id="err"></div>
+
+          <details>
+            <summary>Debug (request/response)</summary>
+            <pre id="debug">(trống)</pre>
+          </details>
+        </div>
+      </div>
+
+      <!-- RIGHT: Result -->
+      <div class="card">
+        <div class="cardHeader">
+          <div class="h">
+            <b>Result</b>
+            <span>Ảnh output + thời gian inference</span>
+          </div>
+        </div>
+
+        <div class="preview">
+          <div class="frame">
+            <div class="overlay" id="overlay">
+              <div class="loader">
+                <div class="spin"></div>
+                <div id="overlayText">Running...</div>
+              </div>
+            </div>
+
+            <div class="placeholder" id="ph">
+              <div class="spark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 2l1.3 6.1L19 10l-5.7 1.9L12 18l-1.3-6.1L5 10l5.7-1.9L12 2z" stroke="white"
+                    stroke-width="1.6" opacity=".95" />
+                </svg>
+              </div>
+              <div>Chưa có ảnh. Hãy <b>Load model</b> rồi bấm <b>Generate</b>.</div>
+            </div>
+
+            <img id="img" alt="output" />
+          </div>
+
+          <div class="meta">
+            <div class="left">
+              <b id="metaTitle">Inference</b>
+              <span id="timeInfo">—</span>
+            </div>
+            <div class="actions">
+              <a class="linkBtn" id="openFull" target="_blank" rel="noreferrer" style="display:none">Xem full</a>
+              <a class="linkBtn" id="download" download="sd_output.png" style="display:none">Download</a>
+            </div>
+          </div>
+
+          <div class="hint">
+            Nếu ảnh không hiện: xem Network có request <code>/images/...</code> bị 404/500 không.
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="grid">
-    <!-- Controls -->
-    <div class="card">
-      <div class="row tight" style="justify-content: space-between;">
-        <div class="hint">
-          Nếu FE/BE khác port: set <b>API_BASE</b> bên dưới (vd <code>http://127.0.0.1:8000</code>) và bật CORS ở BE.
-        </div>
-      </div>
-
-      <label>Model (LoRA)</label>
-      <div class="row">
-        <select id="modelSelect" style="min-width:260px"></select>
-        <button class="primary" id="btnLoad">Load / Reload</button>
-        <button id="btnStatus">Check status</button>
-      </div>
-
-      <label>Prompt <span style="color:var(--warn)">*</span></label>
-      <textarea id="prompt" placeholder="Nhập prompt... (bắt buộc)"></textarea>
-
-      <div class="row">
-        <div>
-          <label>Width (256–768, chia hết cho 8)</label>
-          <input id="width" type="number" min="256" max="768" value="512">
-        </div>
-        <div>
-          <label>Height (256–768, chia hết cho 8)</label>
-          <input id="height" type="number" min="256" max="768" value="512">
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>Steps (10–50)</label>
-          <input id="steps" type="number" min="10" max="50" value="30">
-        </div>
-        <div>
-          <label>CFG Scale (1.0–12.0)</label>
-          <input id="cfgScale" type="number" min="1" max="12" step="0.1" value="7.5">
-        </div>
-        <div>
-          <label>Seed (optional)</label>
-          <input id="seed" type="number" placeholder="vd 42">
-        </div>
-      </div>
-
-      <label>Negative Prompt (optional)</label>
-      <input id="neg" placeholder="vd: nsfw, nude, bad anatomy">
-
-      <div class="row tight" style="margin-top: 12px;">
-        <button class="primary" id="btnGen" disabled>Generate</button>
-        <div class="hint" id="hintLine">Model chưa load → không cho generate.</div>
-      </div>
-
-      <div class="error" id="err"></div>
-
-      <details>
-        <summary>Debug (request/response)</summary>
-        <pre id="debug">(trống)</pre>
-      </details>
-    </div>
-
-    <!-- Result -->
-    <div class="card">
-      <div class="imgBox">
-        <div class="hint" id="ph">Chưa có ảnh. Hãy Load model rồi Generate.</div>
-        <img id="img" alt="output"/>
-      </div>
-
-      <div class="toolbar">
-        <div class="hint" id="timeInfo">Inference: —</div>
-        <div class="row tight">
-          <a class="linkBtn" id="openFull" target="_blank" rel="noreferrer" style="display:none">Xem full</a>
-          <a class="linkBtn" id="download" download="sd_output.png" style="display:none">Download</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-
-const API_BASE = "http://127.0.0.1:8000";
-
-const $ = (id) => document.getElementById(id);
-
-function setDebug(obj) {
-  $("debug").textContent = typeof obj === "string" ? obj : JSON.stringify(obj, null, 2);
-}
-
-function showError(msg) {
-  const box = $("err");
-  if (!msg) { box.style.display = "none"; box.textContent = ""; return; }
-  box.style.display = "block";
-  box.textContent = msg;
-}
-
-function setStatus(status, message="") {
-  const dot = $("dot");
-  dot.className = "dot";
-  if (status === "loaded") dot.classList.add("ok");
-  else if (status === "failed") dot.classList.add("bad");
-  else if (status === "running") dot.classList.add("run");
-
-  $("statusText").textContent = message ? `${status.toUpperCase()} — ${message}` : status.toUpperCase();
-
-  const canGen = (status === "loaded");
-  $("btnGen").disabled = !canGen;
-  $("hintLine").textContent = canGen ? "Model đã load → có thể Generate." : "Model chưa load → không cho generate.";
-}
-
-async function api(path, options={}) {
-  const res = await fetch(API_BASE + path, {
-    headers: { "Content-Type": "application/json" },
-    ...options
-  });
-
-  const ct = res.headers.get("content-type") || "";
-  const data = ct.includes("application/json") ? await res.json() : await res.text();
-
-  if (!res.ok) {
-    const msg = (typeof data === "string") ? data : (data.detail || data.message || JSON.stringify(data));
-    throw new Error(msg);
-  }
-  return data;
-}
-
-function clearImage() {
-  $("img").style.display = "none";
-  $("ph").style.display = "block";
-  $("openFull").style.display = "none";
-  $("download").style.display = "none";
-  $("timeInfo").textContent = "Inference: —";
-  $("img").src = "";
-}
-
-function showImageByUrl(imageUrl, inferenceMs) {
-  // BE trả relative "/images/xxx.png" -> build absolute URL
-  const full = new URL(imageUrl, API_BASE).toString();
-
-  $("img").src = full;
-  $("img").style.display = "block";
-  $("ph").style.display = "none";
-
-  $("openFull").href = full;
-  $("download").href = full;
-  $("openFull").style.display = "inline-flex";
-  $("download").style.display = "inline-flex";
-
-  $("timeInfo").textContent = (inferenceMs != null) ? `Inference: ${inferenceMs} ms` : "Inference: —";
-}
-
-async function loadModelList() {
-  showError("");
-  setDebug({ action: "GET /api/models" });
-
-  const data = await api("/api/models", { method: "GET" });
-  setDebug({ action: "GET /api/models", response: data });
-
-  const sel = $("modelSelect");
-  sel.innerHTML = "";
-
-  const models = data.models || [];
-  if (models.length === 0) {
-    const opt = document.createElement("option");
-    opt.value = "";
-    opt.textContent = "(Không tìm thấy .safetensors trong LORA_DIR)";
-    sel.appendChild(opt);
-    return;
-  }
-
-  for (const m of models) {
-    const opt = document.createElement("option");
-    opt.value = m.name;
-    opt.textContent = m.name;
-    sel.appendChild(opt);
-  }
-}
-
-async function checkStatus() {
-  showError("");
-  setDebug({ action: "GET /api/model/status" });
-
-  const data = await api("/api/model/status", { method: "GET" });
-  setDebug({ action: "GET /api/model/status", response: data });
-
-  const s = (data.status || "unknown").toLowerCase();
-  if (s === "loaded") setStatus("loaded", data.activeModel || "ready");
-  else if (s === "loading") setStatus("loading", data.message || "");
-  else if (s === "failed") setStatus("failed", data.message || "");
-  else setStatus("not_loaded", "");
-}
-
-async function loadModel() {
-  showError("");
-  clearImage();
-
-  const model = $("modelSelect").value;
-  if (!model) return showError("Chưa chọn model.");
-
-  setStatus("loading", "loading...");
-  setDebug({ action: "POST /api/model/load", request: { model } });
-
-  const data = await api("/api/model/load", {
-    method: "POST",
-    body: JSON.stringify({ model })
-  });
-
-  setDebug({ action: "POST /api/model/load", response: data });
-
-  if ((data.status || "").toLowerCase() === "loaded") {
-    setStatus("loaded", data.activeModel || model);
-  } else if ((data.status || "").toLowerCase() === "failed") {
-    setStatus("failed", data.message || "failed");
-  } else {
-    setStatus((data.status || "loading").toLowerCase(), data.message || "");
-  }
-}
-
-async function generate() {
-  showError("");
-  clearImage();
-
-  const model = $("modelSelect").value;
-  const prompt = $("prompt").value.trim();
-
-  if (!model) return showError("Chưa chọn model.");
-  if (!prompt) return showError("Prompt rỗng.");
-
-  const width = parseInt($("width").value || "512", 10);
-  const height = parseInt($("height").value || "512", 10);
-  const steps = parseInt($("steps").value || "30", 10);
-  const cfgScale = parseFloat($("cfgScale").value || "7.5");
-  const seedStr = $("seed").value.trim();
-  const seed = seedStr ? parseInt(seedStr, 10) : null;
-  const negativePrompt = $("neg").value.trim() || null;
-
-  // quick client-side validation
-  if (width % 8 !== 0 || height % 8 !== 0) {
-    return showError("width/height phải chia hết cho 8 (vd 512, 640, 768...).");
-  }
-
-  setStatus("running", "inference...");
-  $("btnGen").disabled = true;
-
-  const req = { model, prompt, width, height, steps, cfgScale, seed, negativePrompt };
-  setDebug({ action: "POST /api/generate", request: req });
-
-  try {
-    const data = await api("/api/generate", {
-      method: "POST",
-      body: JSON.stringify(req)
-    });
-
-    setDebug({ action: "POST /api/generate", response: data });
-
-    showImageByUrl(data.imageUrl, data.inferenceMs);
-    setStatus("loaded", data.model || model);
-  } finally {
-    $("btnGen").disabled = false;
-  }
-}
-
-// wire
-$("btnLoad").addEventListener("click", () => loadModel().catch(e => { showError(String(e.message || e)); setStatus("failed", "load error"); }));
-$("btnStatus").addEventListener("click", () => checkStatus().catch(e => { showError(String(e.message || e)); }));
-$("btnGen").addEventListener("click", () => generate().catch(e => { showError(String(e.message || e)); setStatus("loaded", "ready"); }));
-
-// init
-clearImage();
-setStatus("not_loaded", "");
-loadModelList()
-  .then(checkStatus)
-  .catch(e => showError(String(e.message || e)));
-</script>
+  <script type="module" src="/assets/app.js"></script>
 </body>
+
 </html>

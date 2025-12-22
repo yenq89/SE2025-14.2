@@ -12,8 +12,6 @@ attn_lora_path = r"C:\Users\ssm_d\SE2025-14.2\stable-diffusion-webui\models\Stab
 attn_lora_path = r"C:\Users\ssm_d\SE2025-14.2\stable-diffusion-webui\models\Stable-diffusion\lora_ghibli_ver4.safetensors"
 # Hiển thị trên web là tên model được lưu trong thư mục
 
-
-# Tên ảnh được tạo: Đoạn này anh sửa để gen ảnh theo ngày giờ phút giây giúp em 
 image_name = "modified_test_10.png"
 
 # Đường dẫn tới model gốc 
