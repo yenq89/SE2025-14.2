@@ -8,7 +8,10 @@ ROOT_IMAGE_DIR = os.getenv("ROOT_IMAGE_DIR",r"C:\Users\ssm_d\SE2025-14.2\softwar
 
 LORA_DIR = os.getenv(
     "LORA_DIR",
-    r"C:\Users\ssm_d\SE2025-14.2\stable-diffusion-webui\models\Stable-diffusion"
+    r"C:\Users\ssm_d\SE2025-14.2\software_product\model"
 )
 
 REINIT_PIPE_ON_LOAD = os.getenv("REINIT_PIPE_ON_LOAD", "false").lower() == "true"
+
+BASE_MODELS = ["SD_ver1.5"]
+
