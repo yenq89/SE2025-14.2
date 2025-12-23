@@ -26,7 +26,7 @@ Bên cạnh đó, dự án hướng tới việc áp dụng các nguyên lý c�
 
 - Xây dựng script hỗ trợ batch image generation cho từng checkpoint thuộc từng phiên bản dataset, giúp đảm bảo các điều kiện sinh ảnh nhất quán (prompt, seed, tham số inference) và giảm thao tác thủ công trong quá trình đánh giá bằng mắt.
 
-- Thực hiện kiểm thử giao diện theo các tiêu chí chức năng và độ ổn định, đảm bảo hệ thống sẵn sàng cho demo và đánh giá cuối kỳ.
+- Thực hiện xây dựng và kiểm thử giao diện theo các tiêu chí chức năng và độ ổn định, đảm bảo hệ thống sẵn sàng cho demo và đánh giá cuối kỳ.
 
 ---
 
@@ -38,8 +38,21 @@ Phạm vi của dự án tập trung vào:
 - Phong cách tạo ảnh anime lấy cảm hứng từ Ghibli-style.
 - Fine-tuning mô hình Stable Diffusion v1.5 bằng LoRA.
 - Đánh giá định tính chất lượng ảnh sinh ra thông qua so sánh trực quan và các tiêu chí thị giác.
+- Đánh giá định lượng khả năng học của mô hình bằng **Noise Prediction Loss**.
 
-Dataset được sử dụng trong dự án phục vụ cho mục đích học tập và nghiên cứu, không nhằm mục đích thương mại.
+Dataset bao gồm ảnh từ các bộ phim Ghibli sau:
+
+1. **Arrietty** 
+2. **From Up on Poppy Hill** 
+3. **Grave of the Fireflies** 
+4. **Howl's Moving Castle** 
+5. **Kiki's Delivery Service**
+6. **Whisper of the Heart** 
+7. **Spirited Away**
+8. **The Wind Rises**
+9. **Ponyo**
+
+> **Lưu ý**: Dataset được sử dụng trong dự án phục vụ cho mục đích học tập và nghiên cứu, không nhằm mục đích thương mại.
 
 ### Limitations
 
@@ -84,6 +97,84 @@ Quy trình thực hiện dự án được chia thành các giai đoạn chính 
 
 ---
 
+## Dataset Construction and Versioning
+
+Trong quá trình thực hiện dự án, nhóm đã xây dựng và sử dụng nhiều phiên bản dataset khác nhau nhằm phân tích ảnh hưởng của nguồn dữ liệu, chất lượng dữ liệu và chiến lược lọc dữ liệu đến kết quả fine-tuning mô hình. Mỗi phiên bản dataset phản ánh một giai đoạn thử nghiệm và điều chỉnh khác nhau trong quá trình phát triển.
+
+### Dataset Version 1 (v1)
+
+Dataset v1 được thu thập bằng cách crawl ảnh từ các nguồn web công khai sử dụng thư viện `simple_image_download` trong Python.  
+Bộ dữ liệu này bao gồm **171 ảnh**, chủ yếu là hình minh họa anime theo từ khóa liên quan đến Ghibli-style.
+
+Tuy nhiên, do phụ thuộc vào kết quả tìm kiếm trên web, dataset v1 có số lượng ảnh hạn chế và chất lượng không đồng đều, dẫn đến kết quả huấn luyện chưa ổn định.
+
+
+### Dataset Version 2 (v2)
+
+Dataset v2 tiếp tục sử dụng phương pháp crawl ảnh tự động bằng `simple_image_download`, với việc mở rộng từ khóa tìm kiếm.  
+Phiên bản này thu thập được **292 ảnh**, tăng nhẹ về số lượng so với v1.
+
+Mặc dù số lượng ảnh tăng lên, chất lượng dữ liệu vẫn chưa được cải thiện đáng kể do:
+- Nguồn ảnh bị giới hạn
+- Phong cách hình ảnh không nhất quán
+- Một số ảnh không phù hợp hoàn toàn với mục tiêu học phong cách nhân vật
+
+
+### Dataset Version 3 (v3)
+
+Sau khi nhận thấy chất lượng huấn luyện từ các dataset crawl web không đạt yêu cầu, nhóm quyết định **thay đổi chiến lược thu thập dữ liệu**.
+
+Ở phiên bản v3, dataset được xây dựng bằng cách **xem phim hoạt hình và tự động crop các khung hình** để trích xuất ảnh huấn luyện.  
+Cách tiếp cận này giúp:
+- Chủ động kiểm soát nội dung hình ảnh
+- Đảm bảo phong cách hình ảnh nhất quán hơn
+
+Dataset v3 thu thập được **4,776 ảnh**, tuy nhiên bộ dữ liệu này vẫn còn chứa:
+- Nhiều ảnh có **nhiều nhân vật trong cùng một khung hình**
+- Một số ảnh có **động vật**
+- Một số ảnh có bố cục phức tạp hoặc nhân vật quá nhỏ trong khung hình
+
+Phiên bản này đóng vai trò là dataset lớn nhưng chưa được lọc kỹ.
+
+
+### Dataset Version 4 (v4)
+
+Dataset v4 được tạo ra bằng cách **lọc lại dataset v3** nhằm nâng cao chất lượng dữ liệu đầu vào.  
+Các tiêu chí lọc chính bao gồm:
+- Loại bỏ ảnh có động vật
+- Loại bỏ ảnh có nhiều nhân vật
+- Loại bỏ các góc chụp không rõ mặt hoặc bố cục không phù hợp
+
+Sau khi lọc, dataset v4 còn lại **290 ảnh**, tập trung vào các ảnh có một nhân vật người với bố cục và khuôn mặt rõ ràng hơn.
+
+Phiên bản này thể hiện sự đánh đổi rõ rệt giữa **số lượng và chất lượng dữ liệu**.
+
+
+### Dataset Version 5 (v5)
+
+Dataset v5 tiếp tục được lọc từ dataset v4 với tiêu chí nghiêm ngặt hơn, chỉ giữ lại các ảnh:
+- Khuôn mặt nhân vật rõ ràng, không lỗi
+- Bố cục đơn giản, nhân vật là trung tâm khung hình
+
+Kết quả, dataset v5 chỉ còn **28 ảnh**, đại diện cho tập dữ liệu nhỏ nhất nhưng có chất lượng được đánh giá tốt hơn version 1, 2, 3.
+
+Phiên bản này được sử dụng để khảo sát ảnh hưởng của dataset cực nhỏ nhưng được lọc kỹ đến kết quả fine-tuning theo phong cách.
+
+
+### Summary of Dataset Versions
+
+| Dataset Version | Số lượng ảnh | Phương pháp thu thập | Đặc điểm chính |
+|-----------------|-------------|----------------------|----------------|
+| v1 | 171 | Crawl web + (`simple_image_download`) lib | Nhỏ, chất lượng không đồng đều |
+| v2 | 292 | Crawl web + (`simple_image_download`) lib | Số lượng tăng, style chưa ổn định |
+| v3 | 4,776 | Crop từ phim hoạt hình | Lớn, chưa lọc kỹ |
+| v4 | 290 | Lọc từ v3 | Chất lượng cao, tập trung nhân vật |
+| v5 | 28 | Lọc từ v4 | Rất nhỏ |
+
+Phần đánh giá tiếp theo sẽ phân tích ảnh hưởng của các phiên bản dataset này đến kết quả sinh ảnh của mô hình trong cùng điều kiện inference.
+
+---
+
 ## Evaluation and Discussion
 
 ### Evaluation Setup
@@ -116,12 +207,12 @@ Một ảnh sẽ **không được xem là đạt yêu cầu** nếu xuất hi�
 ### Model Comparison
 | Prompt | Model | Ảnh sinh ra |
 |--------|-------|------------|
-| [#1](#prompt-1) | SD v1.5 (Base) | ![](test\images\SE14.2_ouput_test_demo\v0.png) |
-| [#1](#prompt-1) | LoRA Ghibli v1 | ![](test\images\SE14.2_ouput_test_demo\v1.png) |
-| [#1](#prompt-1) | LoRA Ghibli v2 | ![](test\images\SE14.2_ouput_test_demo\v2.png) |
-| [#1](#prompt-1) | LoRA Ghibli v3 | ![](test\images\SE14.2_ouput_test_demo\v3.png) |
-| [#1](#prompt-1) | LoRA Ghibli v4 | ![](test\images\SE14.2_ouput_test_demo\v4.1.png) |
-| [#1](#prompt-1) | LoRA Ghibli v5 | ![](test\images\SE14.2_ouput_test_demo\v5.png) |
+| [#1](#prompt-1) | SD v1.5 (Base) | ![](https://github.com/yenq89/SE2025-14.2/blob/79f65c95ea8dac6d7fa9ed56c2b81e553e1d26d5/test/images/SE14.2_ouput_test_demo/v0.png) |
+| [#1](#prompt-1) | LoRA Ghibli v1 | ![](https://github.com/yenq89/SE2025-14.2/blob/79f65c95ea8dac6d7fa9ed56c2b81e553e1d26d5/test/images/SE14.2_ouput_test_demo/v1.png) |
+| [#1](#prompt-1) | LoRA Ghibli v2 | ![](https://github.com/yenq89/SE2025-14.2/blob/79f65c95ea8dac6d7fa9ed56c2b81e553e1d26d5/test/images/SE14.2_ouput_test_demo/v2.png) |
+| [#1](#prompt-1) | LoRA Ghibli v3 | ![](https://github.com/yenq89/SE2025-14.2/blob/79f65c95ea8dac6d7fa9ed56c2b81e553e1d26d5/test/images/SE14.2_ouput_test_demo/v3.png) |
+| [#1](#prompt-1) | LoRA Ghibli v4 | ![](https://github.com/yenq89/SE2025-14.2/blob/79f65c95ea8dac6d7fa9ed56c2b81e553e1d26d5/test/images/SE14.2_ouput_test_demo/v4.1.png) |
+| [#1](#prompt-1) | LoRA Ghibli v5 | ![](https://github.com/yenq89/SE2025-14.2/blob/79f65c95ea8dac6d7fa9ed56c2b81e553e1d26d5/test/images/SE14.2_ouput_test_demo/v5.png) |
 
 > **Lưu ý:** Tất cả ảnh trong bảng được sinh ra với cùng prompt, seed và tham số inference để đảm bảo tính công bằng khi so sánh.
 
