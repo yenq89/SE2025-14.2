@@ -65,7 +65,7 @@ Quy trình thực hiện dự án được chia thành các giai đoạn chính 
 
 ### Model Training
 - Sử dụng Stable Diffusion v1.5 làm base model.
-- Fine-tune bằng LoRA với các dataset version khác nhau.
+- Fine-tune bằng LoRA với các dataset version khác nhau, và nhiều bộ tham số khác nhau cho mỗi dataset version.
 - Lưu checkpoint theo các mốc training step.
 
 ### Inference
