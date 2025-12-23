@@ -1,10 +1,8 @@
 # Báo cáo công việc tuần 7 - Dự án LoRA Ghibli SD
 
 ## Mục tiêu tuần:
-- Huấn luyện LoRA
-- Đánh giá hiệu quả mô hình thông qua hàm loss và ảnh sinh được.
-- Tìm ra bộ tham số phù hợp.
-- Tìm ra mô hình tốt nhất và bộ dữ liệu tương ứng.
+- [x] Tìm ra bộ tham số phù hợp.
+- [x] Tìm ra mô hình tốt nhất và bộ dữ liệu tương ứng.
 
 ## Hành động:
 - Code mã lệnh huấn luyện LoRA và chạy chương trình.
@@ -66,4 +64,49 @@ Ngoài theo dõi qua dữ liệu *loss*, ảnh sinh ra cũng rất quan trọng,
 - Lần chạy `rank=32` đã cho thấy nhiều sự cải thiện về hình nét của nhân vật.
 - Việc tăng `num_validation_images` lên `8` hoặc `10` giúp cải thiện việc đánh giá kết quả ngay tại thời điểm mô hình chạy.
 
-### 
+### Dựa theo đánh giá ảnh test.
+Chi tiết nội dung test: *caption* và tiêu chí đánh giá được trình bày ở https://github.com/yenq89/SE2025-14.2/issues/35.
+| Phiên bản | Kết quả tốt nhất | Checkpoint tương ứng |
+| --------- | ---------------- | -------------------- |
+| 3.1 | 7/20 | 3000 |
+| 3.2 | 7-8/20 | 2000 |
+| 3.3 | 6/20 | 4000 |
+| 4.1 | 3/20 | 15000 |
+| 4.2 | 8/20 | 1500 |
+| 4.3 | 8/20 | 1500, 5000, 5500 |
+| 4.4 | 10/20 | 1500 |
+| 4.5 | 12/20 | 2000 |
+| 4.6 | 9-10/20 | 2500 |
+| 4.7 | 3/20 | 1500 |
+| 4.8 | 14/20 | 1500 |
+| 4.9 | 10/20 | 1500 |
+| 5.0 | 5/20 | 2000 |
+| 5.1 | 8/20 | 1000 |
+
+- Mặc dù đây là kết quả được đánh giá chủ quan bởi cả ba thành viên, kết quả nổi bật của mô hình thường nằm ở khoảng 3000 step đầu tiên.
+- Các mô hình có kết quả nổi bật là `3.2`, `4.4`, `4.5`, `4.6`, `4.8`, `4.9` và `5.1`.
+
+## Tổng kết
+### Quá trình huấn luyện:
+Như vậy, nhóm đã tìm ra các kết quả vô cùng tích cực. Trả lời câu hỏi:
+- Bộ tham số tốt nhất bao gồm: `batch_size=8`, `learning_rate` bằng `1e-4` hoặc `5e-5`.
+- Mô hình tốt nhất có lẽ là `4.8` tương ứng với điểm `14/20` và thuộc bộ dữ liệu **ver 4**.
+
+### Những công việc khác đã hoàn thành trong thời gian này: 
+
+1. Xử lý & Nâng cao Chất lượng Dữ liệu
+* **Cải thiện Data:** Thực hiện nâng cao chất lượng bộ dữ liệu huấn luyện (Data quality improvement).
+* **Trực quan hóa:** Tối ưu hóa phần trình bày các biểu đồ trực quan để theo dõi dữ liệu tốt hơn.
+* **Xử lý ngôn ngữ:** Khắc phục các lỗi chính tả nhỏ phát sinh trong quá trình sinh chú thích (captioning) tự động cho dữ liệu.
+
+2. Sửa lỗi Kỹ thuật & Hệ thống
+* **Lỗi môi trường chạy:** Khắc phục lỗi `OS Error` trong file `quick_test_model.py`, đảm bảo việc kiểm thử nhanh mô hình ổn định.
+* **Xử lý giới hạn mô hình:** Giải quyết cảnh báo liên quan đến độ dài chuỗi Token (`Token indices sequence length`) khi dữ liệu đầu vào vượt quá giới hạn cho phép của mô hình.
+* **Hạ tầng kết nối:** Sửa lỗi kết nối AnyDesk ("Client Offline - This desk is not available") để đảm bảo việc truy cập điều khiển từ xa thông suốt.
+
+3. Quản lý Kho lưu trữ & Tài liệu
+* **Cấu trúc Repo:** Cập nhật tài liệu hướng dẫn về xử lý dữ liệu (data-processing) và điều chỉnh lại cấu trúc repository để dễ quản lý hơn.
+* **An toàn mô hình:** Thực hiện các tùy chỉnh liên quan đến bộ lọc an toàn (`safety_checker`) và xử lý các vấn đề liên quan đến nội dung không phù hợp (NSFW) trong giai đoạn đầu.
+
+---
+**Ghi chú:** Danh sách này tập trung vào các công việc nền tảng về dữ liệu và hệ thống đã thực hiện trước khi bước vào giai đoạn nước rút làm WebUI và Demo trong vài ngày trở lại đây.
