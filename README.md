@@ -48,7 +48,7 @@ data/
 ```
 **Lưu ý:** Cần thực hiện đúng cách tổ chức này để có thể tương thích với thư viện và chạy chương trình huấn luyện.
 
-Chi tiết về oông cụ, phương pháp xem tại: [Hướng dẫn dùng công cụ AI xử lý ảnh](https://github.com/yenq89/SE2025-14.2/tree/main/data_processing)
+Các bước chi tiết được trình bày trong tài liệu: [Pipeline xử lý dữ liệu](https://github.com/yenq89/SE2025-14.2/tree/main/data_processing)
 
 Có thể tìm thấy dữ liệu ở: [Bộ dữ liệu Ghibli 5 version](https://drive.google.com/drive/folders/1DGaIaaheG0nU-IE9M8bDV1c_4JN1fuE-?usp=drive_link)
 
@@ -108,7 +108,7 @@ accelerate launch --mixed_precision="fp16" train_text_to_image_lora.py \
 ```
 Các đối số truyền vào có thể được thay đổi tuỳ theo mục đích.
 
-Trong quá trình huấn luyện. mô hình sẽ sinh ảnh mẫu để đánh giá và ghi log lên Weight&Biases
+Trong quá trình huấn luyện, mô hình sẽ sinh ảnh mẫu để đánh giá và ghi log lên Weight&Biases.
 
 File trọng số LoRA sau khi huấn luyện có kích thước rất nhỏ, tiện cho việc lưu trữ và chia sẻ.
 
@@ -119,7 +119,7 @@ Sau khi huấn luyện xong, các checkpoint được lưu trong thư mục ```o
 Để chạy WebUI, di chuyển vào thư mục ```software_product/backend```, rồi sau đó khởi động server:
 
 ```bash
-app --reload --host 127.0.0.1 --port 8000
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
 Giao diện WebUI 
 
@@ -143,4 +143,4 @@ Kết quả ảnh sẽ được hiển thị trực tiếp trên trình duyệt.
 ⚠️ **Lưu ý quan trọng:**  
 > Mô hình này **chỉ phục vụ mục đích học tập và nghiên cứu** trong khuôn khổ môn học SE2025-14.2.  
 > Việc sử dụng dữ liệu tranh của Studio Ghibli trong huấn luyện AI có thể gây **các tranh cãi liên quan bản quyền**.  
-> **không nên sử dụng mô hình này cho mục đích thương mại hoặc phân phối**.
+> **Không nên sử dụng mô hình này cho mục đích thương mại hoặc phân phối**.
