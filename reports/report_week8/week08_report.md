@@ -2,12 +2,12 @@
 ## Xây dựng và kiểm thử Web Demo Stable Diffusion
 
 ### 1. Mục tiêu tuần
-Trong tuần 8, nhóm tập trung vào việc thiết kế và triển khai **web demo cho mô hình Stable Diffusion**, nhằm phục vụ cho việc:
-- Demo khả năng sinh ảnh của model đã fine-tune (base + LoRA)
-- Kiểm thử tính ổn định của pipeline inference
-- Chuẩn bị nền tảng web để phục vụ đánh giá và báo cáo cuối kỳ
+Trong tuần 8, nhóm tập trung vào việc:
+- Thiết kế và triển khai web demo cho mô hình Stable Diffusion (base + LoRA)
+- Hoàn thiện luồng inference từ frontend đến backend
+- Thực hiện kiểm thử web demo nhằm đánh giá tính ổn định, tính đúng đắn của chức năng sinh ảnh và chất lượng ảnh đầu ra
 
-Mục tiêu chính của tuần là xây dựng một web demo **nhẹ, ổn định, dễ kiểm thử**, không phụ thuộc vào các framework frontend phức tạp.
+Kết quả của tuần này nhằm đảm bảo hệ thống sẵn sàng cho giai đoạn demo và báo cáo cuối kỳ.
 
 ---
 
