@@ -13,6 +13,8 @@ Hệ thống bao gồm:
 
 - WebUI cho phép người dùng nhập prompt, điều chỉnh tham số và sinh ảnh trực tiếp trên trình duyệt
 
+Video demo: [Video](https://drive.google.com/drive/folders/1u-tl908jZOr40UpcrJfGtpwYFckIpD16?usp=drive_link)
+
 ## Hướng dẫn các bước thực hiện 
 
 ---
@@ -20,8 +22,12 @@ Hệ thống bao gồm:
 ### 1. Thu thập dữ liệu
 Dữ liệu huấn luyện được thu thập thông qua các phương pháp crawl ảnh từ nhiều nguồn khác nhau trên Internet. 
 
-Sau đó tiến hành lọc bỏ ảnh lỗi, ảnh không phù hợp bằng cách thủ công, sinh mô tả tự động cho ảnh, chuẩn hoá kích thước ảnh và chuẩn hoá định dạng dữ liệu phục vụ huấn luyện. Chi tiết về oông cụ, phương pháp xem tại:
+Sau đó tiến hành các bước xử lý:
 
+1. Lọc bỏ ảnh lỗi, ảnh không phù hợp bằng cách thủ công
+2. Sinh mô tả tự động cho ảnh
+3. Chuẩn hoá kích thước ảnh
+4. Chuẩn hoá định dạng dữ liệu phục vụ huấn luyện 
 
 Dữ liệu huấn luyện được tổ chức như sau:
 
@@ -37,15 +43,16 @@ data/
 
 **Một dòng mẫu từ file `metadata.jsonl`:**
 
-Có thể tìm thấy dữ liệu ở: Link drive
-
 ```json
 {"file_name": "0001.jpg", "text": "a young girl in a yellow shirt and orange skirt is walking through a field in Ghibli style"}
 ```
 **Lưu ý:** Cần thực hiện đúng cách tổ chức này để có thể tương thích với thư viện và chạy chương trình huấn luyện.
 
-### 2. Huấn luyện mô hình
+Chi tiết về oông cụ, phương pháp xem tại: [Hướng dẫn dùng công cụ AI xử lý ảnh](https://github.com/yenq89/SE2025-14.2/tree/main/data_processing)
 
+Có thể tìm thấy dữ liệu ở: [Bộ dữ liệu Ghibli 5 version](https://drive.google.com/drive/folders/1DGaIaaheG0nU-IE9M8bDV1c_4JN1fuE-?usp=drive_link)
+
+### 2. Huấn luyện mô hình
 
 Trước khi chạy các script huấn luyện, cần cài đặt đầy đủ các thư viện cần thiết.
 
@@ -107,15 +114,16 @@ File trọng số LoRA sau khi huấn luyện có kích thước rất nhỏ, ti
 
 ### 3. Chạy mô hình trên WebUI
 
-Sau khi huấn luyện xong, các checkpoint được lưu trong thư mục "output_models". Muốn sử dụng checkpoint nào thì đưa file "pytorch_lora_weights.safetensor" vào folder "software_product/model"
+Sau khi huấn luyện xong, các checkpoint được lưu trong thư mục ```output_models```. Muốn sử dụng checkpoint nào thì đưa file ```pytorch_lora_weights.safetensor``` vào folder ```software_product/model```
 
-Để chạy WebUI, di chuyển vào thư mục "software_product/backend", khởi động server:
+Để chạy WebUI, di chuyển vào thư mục ```software_product/backend```, rồi sau đó khởi động server:
 
 ```bash
 app --reload --host 127.0.0.1 --port 8000
 ```
-
 Giao diện WebUI 
+
+<img width="1590" height="820" alt="image" src="https://github.com/user-attachments/assets/5f2bd21b-38e1-41a5-a028-4afc3191447b" />
 
 Các bước sử dụng:
 
@@ -128,3 +136,8 @@ Các bước sử dụng:
 4. Nhấn Generate để sinh ảnh
 
 Kết quả ảnh sẽ được hiển thị trực tiếp trên trình duyệt.
+
+> ⚠️ **Lưu ý quan trọng:**  
+> Mô hình này **chỉ phục vụ mục đích học tập và nghiên cứu** trong khuôn khổ môn học SE2025-14.2.  
+> Việc sử dụng dữ liệu tranh của Studio Ghibli trong huấn luyện AI có thể gây **các tranh cãi liên quan bản quyền**.  
+> **không nên sử dụng mô hình này cho mục đích thương mại hoặc phân phối**.
