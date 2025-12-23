@@ -1,0 +1,32 @@
+# 1. Bỏ qua các thư mục Môi trường ảo Python
+
+venv/
+*/venv/
+env/
+*/env/
+
+# 3. Bỏ qua thư mục chứa Dataset (Ảnh + Caption)
+
+dataset/
+*_dataset/
+data/
+input_images/
+output_images/
+
+
+# 5. Bỏ qua file rác của Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 6. Bỏ qua file cấu hình của IDE/Trình soạn thảo
+.vscode/
+.idea/
+
+# 7. Bỏ qua các file log và output
+logs/
+outputs/
+
+# 8. Bỏ qua file rác của Hệ điều hành
+.DS_Store
+Thumbs.db
