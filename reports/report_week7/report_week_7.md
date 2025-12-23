@@ -55,7 +55,8 @@ Kết quả của hàm loss phản ánh khả năng:
 ### Dựa theo ảnh sinh ra khi và sau khi huấn luyện:
 Ngoài theo dõi qua dữ liệu *loss*, ảnh sinh ra cũng rất quan trọng, nó phản ánh liệu mô hình có sinh ra những hình ảnh mà con người mong muốn, gây ấn tượng, hay chỉ có thể học theo một cách máy móc. Bản thân mỗi thành viên trong nhóm đã có quan niệm khác nhau về vẻ đẹp, sự phù hợp khi đối chiếu với mục tiêu tạo ra ảnh mang phong cách Ghibli. Vì vậy, không có quy chuẩn cụ thể mà phụ thuộc vào cảm nhận của mỗi người. Điều này đặc biệt quan trọng khi cung cấp **đa dạng góc nhìn**, nhất là khi mô hình chỉ đang cung cấp góc nhìn của nó, và dựa theo đó để cố gắng cải thiện.
 
-<img width="312" height="311" alt="527622863-0d313cba-ac5d-4b09-b025-0a4750e8384a" src="https://github.com/user-attachments/assets/92c3a208-6e70-4e77-8d1a-8ba855bf1d9e" />
+<img width="256" height="256" alt="527622863-0d313cba-ac5d-4b09-b025-0a4750e8384a" src="https://github.com/user-attachments/assets/92c3a208-6e70-4e77-8d1a-8ba855bf1d9e" />
+<img width="256" height="256" alt="529469894-e3a1f3cb-2200-4e33-805b-9bcd305e6f3a" src="https://github.com/user-attachments/assets/785796da-4c8b-457d-bc8d-788d00c9763c" />
 
 - Trái ngược với việc *train loss* giao động, ảnh sinh ra cho thấy sự cải thiện của mô hình khi học được nét vẽ. Ảnh ở những step sau tương đối tốt, ít hình ảnh bị mất chi tiết, hoàn chỉnh.
 - Tuy nhiên, điều đó không đúng với mọi mô hình, có những mô hình có khả năng học kém, kết quả sinh ra có điểm dị thường, mờ, méo mó, ... Các lỗi thường gặp xuất hiện ở khuôn mặt (mắt, cằm, má, miệng, ...), tóc, cánh tay, bàn tay và phần chân. Nhiều hình ảnh không có kích cỡ cơ thể nhân vật phù hợp.
@@ -108,5 +109,4 @@ Như vậy, nhóm đã tìm ra các kết quả vô cùng tích cực. Trả l�
 * **Cấu trúc Repo:** Cập nhật tài liệu hướng dẫn về xử lý dữ liệu (data-processing) và điều chỉnh lại cấu trúc repository để dễ quản lý hơn.
 * **An toàn mô hình:** Thực hiện các tùy chỉnh liên quan đến bộ lọc an toàn (`safety_checker`) và xử lý các vấn đề liên quan đến nội dung không phù hợp (NSFW) trong giai đoạn đầu.
 
----
 **Ghi chú:** Danh sách này tập trung vào các công việc nền tảng về dữ liệu và hệ thống đã thực hiện trước khi bước vào giai đoạn nước rút làm WebUI và Demo trong vài ngày trở lại đây.
