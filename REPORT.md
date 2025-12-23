@@ -38,6 +38,7 @@ Phạm vi của dự án tập trung vào:
 - Phong cách tạo ảnh anime lấy cảm hứng từ Ghibli-style.
 - Fine-tuning mô hình Stable Diffusion v1.5 bằng LoRA.
 - Đánh giá định tính chất lượng ảnh sinh ra thông qua so sánh trực quan và các tiêu chí thị giác.
+- Đánh giá định lượng khả năng học của mô hình bằng **Noise Prediction Loss**.
 
 Dataset được sử dụng trong dự án phục vụ cho mục đích học tập và nghiên cứu, không nhằm mục đích thương mại.
 
