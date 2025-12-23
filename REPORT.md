@@ -2,7 +2,7 @@
 
 ### Project Goals
 
-Mục tiêu chính của dự án là thiết kế, triển khai và đánh giá một hệ thống tạo ảnh nghệ thuật dựa trên AI bằng cách fine-tune mô hình mã nguồn mở Stable Diffusion, tập trung vào khả năng tạo nhân vật anime mang cảm hứng từ phong cách hình ảnh của Studio Ghibli, dựa trên mô hình SDv1.5 gốc.
+Mục tiêu chính của dự án là thiết kế, triển khai và đánh giá một hệ thống tạo ảnh nghệ thuật dựa trên AI bằng cách fine-tune mô hình mã nguồn mở Stable Diffusion từ Hugging Face, tập trung vào khả năng tạo nhân vật anime mang cảm hứng từ phong cách hình ảnh của Studio Ghibli, dựa trên mô hình SDv1.5 gốc.
 
 Dự án tập trung xây dựng và đánh giá một quy trình hoàn chỉnh (end-to-end pipeline), bao gồm các bước chuẩn bị dữ liệu, fine-tuning mô hình, triển khai inference, xây dựng giao diện web demo và kiểm thử hệ thống.
 
