@@ -112,6 +112,7 @@ Kết quả của tuần này nhằm đảm bảo hệ thống sẵn sàng cho g
 
 ### Back-end
 
+```
 software_product/backend/
 ├─ main.py
 ├─ api/
@@ -124,9 +125,10 @@ software_product/backend/
 │ └─ inference.py
 └─ core/
 └─ config.py
+```
 
 ### Front-end
-
+```
 software_product/web/
 ├─ index.html
 └─ assets/
@@ -134,7 +136,7 @@ software_product/web/
 ├─ api.js
 ├─ ui.js
 └─ app.js
-
+```
 ---
 
 ## 5. Cấu hình Backend
