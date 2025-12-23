@@ -26,6 +26,8 @@ Bên cạnh đó, dự án hướng tới việc áp dụng các nguyên lý c�
 
 - Xây dựng script hỗ trợ batch image generation cho từng checkpoint thuộc từng phiên bản dataset, giúp đảm bảo các điều kiện sinh ảnh nhất quán (prompt, seed, tham số inference) và giảm thao tác thủ công trong quá trình đánh giá bằng mắt.
 
+- Tổng hợp kết quả, bao gồm biểu đồ loss, ảnh validation thu được khi train, và ảnh sinh dựa theo prompt test, sau đó phân tích và đánh giá hiệu quả của mô hình.
+
 - Thực hiện kiểm thử giao diện theo các tiêu chí chức năng và độ ổn định, đảm bảo hệ thống sẵn sàng cho demo và đánh giá cuối kỳ.
 
 ---
