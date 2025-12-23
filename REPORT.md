@@ -52,8 +52,6 @@ Dataset bao gồm ảnh từ các bộ phim Ghibli sau:
 8. **The Wind Rises**
 9. **Ponyo**
 
-> **Lưu ý**: Dataset được sử dụng trong dự án phục vụ cho mục đích học tập và nghiên cứu, không nhằm mục đích thương mại.
-
 ### Limitations
 
 Dự án tồn tại một số hạn chế như sau:
