@@ -137,7 +137,10 @@ Các bước sử dụng:
 
 Kết quả ảnh sẽ được hiển thị trực tiếp trên trình duyệt.
 
-> ⚠️ **Lưu ý quan trọng:**  
+<img width="1651" height="802" alt="image" src="https://github.com/user-attachments/assets/cabf6ec1-c45c-4dd7-a1fe-5ef51f2135bf" />
+
+
+⚠️ **Lưu ý quan trọng:**  
 > Mô hình này **chỉ phục vụ mục đích học tập và nghiên cứu** trong khuôn khổ môn học SE2025-14.2.  
 > Việc sử dụng dữ liệu tranh của Studio Ghibli trong huấn luyện AI có thể gây **các tranh cãi liên quan bản quyền**.  
 > **không nên sử dụng mô hình này cho mục đích thương mại hoặc phân phối**.
