@@ -95,17 +95,17 @@ Như vậy, nhóm đã tìm ra các kết quả vô cùng tích cực. Trả l�
 
 ### Những công việc khác đã hoàn thành trong thời gian này: 
 
-1. Xử lý & Nâng cao Chất lượng Dữ liệu
+1. Xử lý & Nâng cao Chất lượng Dữ liệu:
 * **Cải thiện Data:** Thực hiện nâng cao chất lượng bộ dữ liệu huấn luyện (Data quality improvement).
 * **Trực quan hóa:** Tối ưu hóa phần trình bày các biểu đồ trực quan để theo dõi dữ liệu tốt hơn.
 * **Xử lý ngôn ngữ:** Khắc phục các lỗi chính tả nhỏ phát sinh trong quá trình sinh chú thích (captioning) tự động cho dữ liệu.
 
-2. Sửa lỗi Kỹ thuật & Hệ thống
+2. Sửa lỗi Kỹ thuật & Hệ thống:
 * **Lỗi môi trường chạy:** Khắc phục lỗi `OS Error` trong file `quick_test_model.py`, đảm bảo việc kiểm thử nhanh mô hình ổn định.
 * **Xử lý giới hạn mô hình:** Giải quyết cảnh báo liên quan đến độ dài chuỗi Token (`Token indices sequence length`) khi dữ liệu đầu vào vượt quá giới hạn cho phép của mô hình.
 * **Hạ tầng kết nối:** Sửa lỗi kết nối AnyDesk ("Client Offline - This desk is not available") để đảm bảo việc truy cập điều khiển từ xa thông suốt.
 
-3. Quản lý Kho lưu trữ & Tài liệu
+3. Quản lý Kho lưu trữ & Tài liệu:
 * **Cấu trúc Repo:** Cập nhật tài liệu hướng dẫn về xử lý dữ liệu (data-processing) và điều chỉnh lại cấu trúc repository để dễ quản lý hơn.
 * **An toàn mô hình:** Thực hiện các tùy chỉnh liên quan đến bộ lọc an toàn (`safety_checker`) và xử lý các vấn đề liên quan đến nội dung không phù hợp (NSFW) trong giai đoạn đầu.
 
