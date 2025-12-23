@@ -26,7 +26,9 @@ Bên cạnh đó, dự án hướng tới việc áp dụng các nguyên lý c�
 
 - Xây dựng script hỗ trợ batch image generation cho từng checkpoint thuộc từng phiên bản dataset, giúp đảm bảo các điều kiện sinh ảnh nhất quán (prompt, seed, tham số inference) và giảm thao tác thủ công trong quá trình đánh giá bằng mắt.
 
-- Thực hiện xây dựng và kiểm thử giao diện theo các tiêu chí chức năng và độ ổn định, đảm bảo hệ thống sẵn sàng cho demo và đánh giá cuối kỳ.
+- Tổng hợp kết quả, bao gồm biểu đồ loss, ảnh validation thu được khi train, và ảnh sinh dựa theo prompt test, sau đó phân tích và đánh giá hiệu quả của mô hình.
+
+- Thực hiện kiểm thử giao diện theo các tiêu chí chức năng và độ ổn định, đảm bảo hệ thống sẵn sàng cho demo và đánh giá cuối kỳ.
 
 ---
 
@@ -76,7 +78,7 @@ Quy trình thực hiện dự án được chia thành các giai đoạn chính 
 
 ### Model Training
 - Sử dụng Stable Diffusion v1.5 làm base model.
-- Fine-tune bằng LoRA với các dataset version khác nhau.
+- Fine-tune bằng LoRA với các dataset version khác nhau, và nhiều bộ tham số khác nhau cho mỗi dataset version.
 - Lưu checkpoint theo các mốc training step.
 
 ### Inference
