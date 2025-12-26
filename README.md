@@ -139,6 +139,12 @@ Kết quả ảnh sẽ được hiển thị trực tiếp trên trình duyệt.
 
 <img width="1651" height="802" alt="image" src="https://github.com/user-attachments/assets/cabf6ec1-c45c-4dd7-a1fe-5ef51f2135bf" />
 
+## Công nghệ sử dụng
+- **Mô hình nền:** Stable Diffusion v1.5  
+- **Phương pháp huấn luyện:** LoRA (Low-Rank Adaptation)  
+- **Thư viện huấn luyện:** Hugging Face Diffusers
+- **WebUI:** FastAPI, Uvicorn, HTML5, CSS3, Vanilla JavaScript
+- **Ngôn ngữ lập trình:** Python3.10+, Jupyter Notebook, HTML, CSS, JS
 
 ⚠️ **Lưu ý quan trọng:**  
 > Mô hình này **chỉ phục vụ mục đích học tập và nghiên cứu** trong khuôn khổ môn học SE2025-14.2.  
